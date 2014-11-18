@@ -1,0 +1,61 @@
+h1, h2, h3, h4, h5, h6 {
+    font-family: Georgia, serif;
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+p {
+    font-family: Arial, sans-serif;
+    font-size: 1.1rem;
+    line-height: 135%;
+}
+
+body {
+    width: 90%;
+    margin: 0 auto;
+    border: 0.1rem solid black;
+}
+
+header {
+    padding: 0.2rem;
+    overflow: auto;
+    clear: both;
+    background-color: #BDBDBD;
+}
+
+header div {
+    float: right;
+}
+
+nav {
+    float: left;
+    background-color: #BDBDBD;
+}
+
+nav ul {
+    padding: 0;
+    margin: 0.1rem 0;
+    list-style-type: none;
+}
+
+nav li {
+    display: inline;
+    margin: 0 0.5rem;
+}
+
+nav a {
+    padding: 0.1rem 0.8rem;
+    color: black;
+    background-color: white;
+}
+
+nav a:hover {
+    color: red;
+}
+
+a {
+    text-decoration: none;
+}
+
