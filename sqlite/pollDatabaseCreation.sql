@@ -10,14 +10,13 @@ CREATE TABLE IF NOT EXISTS UserData (
     loginAttempts INTEGER NOT NULL,
     lastLoginDate DATE NOT NULL,
     -- Session Data
-    sessionID TEXT NOT NULL,
+    sessionId TEXT NOT NULL,
     sessionTime INTEGER NOT NULL,
     sessionData TEXT NOT NULL,
-    sessionKey TEXT NOT NULL,
     -- Additional User data
     username TEXT NOT NULL,
-    about TEXT
-    UNIQUE(email), UNIQUE(username),
+    about TEXT,
+    UNIQUE(email), UNIQUE(username), UNIQUE(sessionId),
     PRIMARY KEY (idUser));
 
 CREATE TABLE IF NOT EXISTS PollEnquiry (
