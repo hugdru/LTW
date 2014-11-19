@@ -4,17 +4,16 @@ CREATE TABLE IF NOT EXISTS UserData (
     idUser INTEGER AUTO INCREMENT,
     -- Login Data
     email TEXT NOT NULL,
-    password TEXT NOT NULL, -- 128 characters long
-    salt TEXT NOT NULL, -- 128 characters long
+    -- native php password_hash generates $hashAndRandomSalt, to avoid pre-computed attacks like:
+    -- reverse dictionary attacks and Rainbow table attacks. So there is no need to create another
+    -- member called salt. The native function does something like hash(password+salt) . $salt
+    hashPlusSalt TEXT NOT NULL,
     -- Bot control
     loginAttempts INTEGER NOT NULL,
     lastLoginDate DATE NOT NULL,
-    -- Session Data
-    sessionId TEXT NOT NULL,
-    sessionTime INTEGER NOT NULL,
-    sessionData TEXT NOT NULL,
     -- Additional User data
     username TEXT NOT NULL,
+    lastIp TEXT NOT NULL,
     about TEXT,
     UNIQUE(email), UNIQUE(username), UNIQUE(sessionId),
     PRIMARY KEY (idUser));
