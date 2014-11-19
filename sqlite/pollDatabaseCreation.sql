@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS UserData (
     username TEXT NOT NULL,
     lastIp TEXT NOT NULL,
     about TEXT,
-    UNIQUE(email), UNIQUE(username), UNIQUE(sessionId),
+    UNIQUE(email), UNIQUE(username),
     PRIMARY KEY (idUser));
 
 CREATE TABLE IF NOT EXISTS PollEnquiry (
