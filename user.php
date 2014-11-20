@@ -7,5 +7,9 @@ if (!validLogin()) {
     header('Location: index.php?error=login');
     exit();
 }
-echo '<h1>login success</h1>'
-?>
+
+require_once 'templates/header.php';?>
+<main>
+    <?php echo '<h1>login success</h1>';?>
+</main>
+<?php require_once 'templates/footer.php';?>
