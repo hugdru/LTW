@@ -15,11 +15,12 @@ if (!$_POST['email'] || !$_POST['password'] || !$_POST['username']) {
 
 // Strip garbage from beginning and end of string
 $email = trim($_POST['email']);
-$username = trim($_POST['password']);
+$username = trim($_POST['username']);
 
 // Convert email to lower case because almost
 // no email provider cares about it
 $email = mb_strtolower($email);
+$username = mb_strtolower($username);
 
 // Check if email is valid
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -28,17 +29,6 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 $error = null;
-// Check if username is valid
-if (strlen($username) < 4) {
-    $error = 'usernameShort';
-} else if (preg_match('/^[a-z]{4}[a-z\d_]{0,16}$/', $username)) {
-    $error = 'usernameInvalid';
-}
-if ($error) {
-    header("Location: register.php?error=$error");
-    exit();
-}
-
 // Check if password is valid
 $password = $_POST['password'];
 $passwordLength = strlen($password);
@@ -52,16 +42,31 @@ if ($passwordLength > 72) {
         $error .= 'passwordNumber';
     }
     if (!preg_match('/[a-z]+/', $password)) {
-        $error .= 'PasswordUncap';
+        $error .= 'passwordUncap';
     }
     if (!preg_match('/[A-Z]+/', $password)) {
-        $error .= 'PasswordCap';
+        $error .= 'passwordCap';
     }
     if (!preg_match('/\W+/', $password)) {
-        $error .= "PasswordSymbol";
+        $error .= "passwordSymbol";
     }
 }
-if ($error) {
+if ($error !== null) {
+    header("Location: register.php?error=$error");
+    exit();
+}
+
+// Check if username is valid
+if (strlen($username) < 4) {
+    $error = 'usernameShort';
+} else if (preg_match(
+    '/^[a-z][a-z\d.-_]{4,19}', $username
+)) {
+    var_dump($username);
+    die();
+    $error = 'usernameInvalid';
+}
+if ($error !== null) {
     header("Location: register.php?error=$error");
     exit();
 }

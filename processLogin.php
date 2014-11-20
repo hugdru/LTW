@@ -46,8 +46,9 @@ if (!$validCredentials) {
     exit();
 }
 
-if (password_needs_rehash($userData['hashPlusSalt'], PASSWORD_DEFAULT)) {
-    $newHashPlusSalt = password_hash($_POST['password'], PASSWORD_DEFAULT);
+$options = [ 'cost' => 12 ];
+if (password_needs_rehash($userData['hashPlusSalt'], PASSWORD_DEFAULT, $options)) {
+    $newHashPlusSalt = password_hash($_POST['password'], PASSWORD_DEFAULT, $options);
     $stmtNewHashPlusSalt = $dbh->prepare(
         'UPDATE UserData
         SET hashPlusSalt = :newHashPlusSalt
@@ -55,7 +56,7 @@ if (password_needs_rehash($userData['hashPlusSalt'], PASSWORD_DEFAULT)) {
     );
     $stmtNewHashPlusSalt->execute(
         array(
-            ':newsHashPlusSalt' => $newHashPlusSalt,
+            ':newHashPlusSalt' => $newHashPlusSalt,
             ':email' => $email
         )
     );
