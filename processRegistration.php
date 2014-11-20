@@ -13,21 +13,62 @@ if (!$_POST['email'] || !$_POST['password'] || !$_POST['username']) {
     exit();
 }
 
-$passwordLength = strlen($_POST['password']);
+// Strip garbage from beginning and end of string
+$email = trim($_POST['email']);
+$username = trim($_POST['password']);
+
+// Convert email to lower case because almost
+// no email provider cares about it
+$email = mb_strtolower($email);
+
+// Check if email is valid
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    header('Location: register.php?error=emailInvalid');
+    exit();
+}
+
+$error = null;
+// Check if username is valid
+if (strlen($username) < 4) {
+    $error = 'usernameShort';
+} else if (preg_match('/^[a-z]{4}[a-z\d_]{0,16}$/', $username)) {
+    $error = 'usernameInvalid';
+}
+if ($error) {
+    header("Location: register.php?error=$error");
+    exit();
+}
+
+// Check if password is valid
+$password = $_POST['password'];
+$passwordLength = strlen($password);
 
 if ($passwordLength > 72) {
-    header('Location: register.php?error=passwordLong');
-    exit();
+    $error = 'passwordLong';
+} else if ($passwordLength < 8) {
+    $error = 'passwordShort';
+} else {
+    if (!preg_match('/[0-9]+/', $password)) {
+        $error .= 'passwordNumber';
+    }
+    if (!preg_match('/[a-z]+/', $password)) {
+        $error .= 'PasswordUncap';
+    }
+    if (!preg_match('/[A-Z]+/', $password)) {
+        $error .= 'PasswordCap';
+    }
+    if (!preg_match('/\W+/', $password)) {
+        $error .= "PasswordSymbol";
+    }
 }
-if ($passwordLength < 8) {
-    header('Location: register.php?error=passwordShort');
+if ($error) {
+    header("Location: register.php?error=$error");
     exit();
 }
 
-if (strlen($_POST['username']) < 4) {
-    header('Location: register.php?error=usernameShort');
-    exit();
-}
+// Check if about is valid
+$about = $_POST['about'];
+
 
 // Check if email and username exists in database
 //$stmt = $dbh->prepare(
@@ -50,7 +91,8 @@ if (strlen($_POST['username']) < 4) {
 $stmt = $dbh->prepare(
     'SELECT email FROM UserData WHERE email = :email'
 );
-$stmt->bindParam(':email', $_POST['email']);
+$stmt->bindParam(':email', $email);
+$stmt->execute();
 $exists = $stmt->fetch();
 if ($exists) {
     header('Location: register.php?error=emailExists');
@@ -61,14 +103,16 @@ if ($exists) {
 $stmt = $dbh->prepare(
     'SELECT username FROM UserData WHERE username = :username'
 );
-$stmt->bindParam(':username', $_POST['username']);
+$stmt->bindParam(':username', $username);
+$stmt->execute();
 $exists = $stmt->fetch();
 if ($exists) {
     header('Location: register.php?error=usernameExists');
     exit();
 }
 
-$hashPlusSalt = password_hash($_POST['password'], PASSWORD_DEFAULT);
+$options = ['cost' => 12];
+$hashPlusSalt = password_hash($_POST['password'], PASSWORD_DEFAULT, $options);
 
 $stmt = $dbh->prepare(
     'INSERT INTO UserData
@@ -77,10 +121,10 @@ $stmt = $dbh->prepare(
 );
 if (!$stmt->execute(
     array(
-        ':email' => $_POST['email'],
+        ':email' => $email,
         ':hashPlusSalt' => $hashPlusSalt,
-        ':username' => $_POST['username'],
-        ':about' => $_POST['about']
+        ':username' => $username,
+        ':about' => $about
     )
 )) {
     header('Location: register.php?error=failedInsert');

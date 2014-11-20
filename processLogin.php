@@ -13,23 +13,19 @@ if (!$_POST['email'] || !$_POST['password']) {
     exit();
 }
 
-$passwordLength = strlen($_POST['password']);
+// Strip garbage from beginning and end of string
+$email = trim($_POST['email']);
 
-if ($passwordLength > 72) {
-    header('Location: index.php?error=passwordLong');
-    exit();
-}
-if ($passwordLength < 8) {
-    header('Location: index.php?error=passwordShort');
-    exit();
-}
+// Convert email to lower case because almost
+// no email provider cares about it
+$email = mb_strtolower($email);
 
 $stmt = $dbh->prepare(
     'SELECT email,idUser,username,hashPlusSalt,loginAttempts,lastLoginDate
     FROM UserData
     WHERE email = :email'
 );
-$stmt->bindParam(':email', $_POST['email']);
+$stmt->bindParam(':email', $email);
 $stmt->execute();
 $userData = $stmt->fetch();
 
@@ -38,6 +34,7 @@ $validCredentials = false;
 //attacks like: reverse dictionary attacks and Rainbow table attacks. So there is no
 //need to create another variable in database called salt. The native function does
 //something like $hashAndRandomSalt = hash(password+salt) . $RandomSalt
+
 if ($userData) {
     $validCredentials = password_verify(
         $_POST['password'], $userData['hashPlusSalt']
@@ -47,6 +44,21 @@ if ($userData) {
 if (!$validCredentials) {
     header('Location: index.php?error=login');
     exit();
+}
+
+if (password_needs_rehash($userData['hashPlusSalt'], PASSWORD_DEFAULT)) {
+    $newHashPlusSalt = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $stmtNewHashPlusSalt = $dbh->prepare(
+        'UPDATE UserData
+        SET hashPlusSalt = :newHashPlusSalt
+        WHERE email = :email'
+    );
+    $stmtNewHashPlusSalt->execute(
+        array(
+            ':newsHashPlusSalt' => $newHashPlusSalt,
+            ':email' => $email
+        )
+    );
 }
 
 require_once 'codeIncludes/secureSession.php';
