@@ -1,6 +1,12 @@
 <?php
 require_once 'codeIncludes/https.php';
 require_once 'codeIncludes/secureSession.php';
+require_once 'functions/validLogin.php';
+
+if (!validLogin()) {
+    header('Location: index.php');
+    exit();
+}
 
 // Unset all of the session variables.
 $_SESSION = array();

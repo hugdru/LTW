@@ -38,7 +38,7 @@ session_start();
 
 // Avoid session fixation attacks, to prevent malicious redirection with
 // tailored session id we generate a new one and delete the old
-if ($_SESSION['initiated'] === null) {
+if (!isset($_SESSION['initiated'])) {
     session_regenerate_id(true);
     $_SESSION['initiated'] = true;
 }

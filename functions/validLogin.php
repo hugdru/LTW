@@ -1,9 +1,9 @@
 <?php
 function validLogin()
 {
-    if ($_SESSION['initiated'] !== null && $_SESSION['email'] !== null
-        && $_SESSION['idUser'] !== null && $_SESSION['username'] !== null
-        && $_SESSION['hashPlusSalt'] !== null && $_SESSION['lastLoginDate'] !== null
+    if (isset(
+        $_SESSION['initiated'], $_SESSION['email'], $_SESSION['idUser'],
+        $_SESSION['username'], $_SESSION['hashPlusSalt'], $_SESSION['lastLoginDate'])
     ) {
         return true;
     } else {

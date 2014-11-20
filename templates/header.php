@@ -7,16 +7,33 @@
 </head>
 <body>
     <header>
+<?php
+if (!$loggedIn) {
+    echo '
+    <div id="login-area">
+        <form action="processLogin.php" method="post">
+            <input type="email" name="email" required="required" autofocus placeholder="Email">
+            <input type="password" name="password" required="required" placeholder="Password">
+            <input type="submit" value="send">
+        </form>
+    </div>';
+} else {
+    echo '
         <div id="login-area">
-            <form action="processLogin.php" method="post">
-                <input type="email" name="email" required="required" autofocus placeholder="Email">
-                <input type="password" name="password" required="required" placeholder="Password">
-                <input type="submit" value="send">
+            <form action="logout.php" method="post">
+                <input type="submit" value="logout">
             </form>
-        </div>
+        </div>';
+}?>
         <nav>
             <ul>
-                <li><a href="index.php">Home</a></li><li><a href="register.php">Register</a></li><li><a href="about.php">About</a></li>
+            <li><a href="index.php">Home</a></li>
+<?php if (!$loggedIn) {
+    echo '<li><a href="register.php">Register</a></li>';
+} else {
+    echo '<li><a href="user.php">User</a></li>';
+}?>
+            <li><a href="about.php">About</a></li>
             </ul>
         </nav>
     </header>
