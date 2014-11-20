@@ -1,7 +1,7 @@
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS UserData (
-    idUser INTEGER AUTO INCREMENT,
+    idUser INTEGER,
     -- Login Data
     email TEXT NOT NULL,
     -- native php password_hash generates $hashAndRandomSalt, to avoid pre-computed attacks like:
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS UserData (
     PRIMARY KEY (idUser));
 
 CREATE TABLE IF NOT EXISTS PollEnquiry (
-    idPollEnquiry INTEGER AUTO INCREMENT,
+    idPollEnquiry INTEGER,
     name TEXT NOT NULL,
     dateCreation DATE NOT NULL,
     synopsis TEXT NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS PollEnquiry (
     PRIMARY KEY (idPollEnquiry));
 
 CREATE TABLE IF NOT EXISTS State (
-    idState INTEGER AUTO INCREMENT,
+    idState INTEGER,
     name TEXT NOT NULL,
     PRIMARY KEY (idState));
 
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS Visibility (
     PRIMARY KEY (idVisibility));
 
 CREATE TABLE IF NOT EXISTS Poll (
-    idPoll INTEGER AUTO INCREMENT,
+    idPoll INTEGER,
     image TEXT, -- file path
     options TEXT NOT NULL, -- opcoes e tipo de poll, formato json
     idPollEnquiry INTEGER NOT NULL,
