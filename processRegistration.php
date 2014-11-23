@@ -14,6 +14,12 @@ if (!$_POST['email'] || !$_POST['password'] || !$_POST['username']) {
     exit();
 }
 
+require_once 'codeIncludes/recaptchaServerSide.php';
+if (!$resp->is_valid) {
+    header('Location: register.php?error=botControl');
+    exit();
+}
+
 // Strip garbage from beginning and end of string
 $email = trim($_POST['email']);
 $username = trim($_POST['username']);

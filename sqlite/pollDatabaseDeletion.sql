@@ -1,3 +1,5 @@
+PRAGMA encoding = "UTF-8";
+
 DROP TABLE IF EXISTS UserData;
 DROP TABLE IF EXISTS PollEnquiry;
 DROP TABLE IF EXISTS State;

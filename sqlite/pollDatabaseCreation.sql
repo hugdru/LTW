@@ -1,4 +1,5 @@
 PRAGMA foreign_keys = ON;
+PRAGMA encoding = "UTF-8";
 
 CREATE TABLE IF NOT EXISTS UserData (
     idUser INTEGER,

@@ -15,7 +15,6 @@ p {
 body {
     width: 90%;
     margin: 0 auto;
-    border: 0.1rem solid black;
 }
 
 header {
@@ -23,6 +22,7 @@ header {
     overflow: auto;
     clear: both;
     background-color: #BDBDBD;
+    border: 0.1rem solid black;
 }
 
 header div {

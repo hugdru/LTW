@@ -1,3 +1,5 @@
+PRAGMA encoding = "UTF-8";
+
 INSERT INTO State (name)
 VALUES ('Open');
 
