@@ -14,6 +14,11 @@ if (!$_POST['email'] || !$_POST['password']) {
     exit();
 }
 
+if ($_POST['csrf'] !== $_SESSION['csrf_token']) {
+    header('Location: index.php?error=csrf');
+    exit();
+}
+
 // Strip garbage from beginning and end of string
 $email = trim($_POST['email']);
 

@@ -15,15 +15,23 @@ if (!$loggedIn) {
             <input type="email" name="email" required="required" autofocus placeholder="Email">
             <input type="password" name="password" required="required" placeholder="Password">
             <input type="submit" value="send">
+    ';
+    echo "
+            <input type=\"hidden\" name=\"csrf\" value=\"${_SESSION['csrf_token']}\">
         </form>
-    </div>';
+    </div>
+    ";
 } else {
     echo '
         <div id="login-area">
             <form action="logout.php" method="post">
                 <input type="submit" value="logout">
+    ';
+    echo "
+    <input type=\"hidden\" name=\"csrf\" value=\"${_SESSION['csrf_token']}\">
             </form>
-        </div>';
+        </div>
+    ";
 }?>
         <nav>
             <ul>

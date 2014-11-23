@@ -38,8 +38,9 @@ session_start();
 
 // Avoid session fixation attacks, to prevent malicious redirection with
 // tailored session id we generate a new one and delete the old
-if (!isset($_SESSION['initiated'])) {
+// And generate csrf_token
+if (!isset($_SESSION['csrf_token'])) {
     session_regenerate_id(true);
-    $_SESSION['initiated'] = true;
+    $_SESSION['csrf_token'] = hash("sha512", mt_rand(0, mt_getrandmax()));
 }
 ?>

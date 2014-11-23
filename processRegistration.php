@@ -64,13 +64,9 @@ if ($error !== null) {
 }
 
 // Check if username is valid
-if (strlen($username) < 4) {
-    $error = 'usernameShort';
-} else if (preg_match(
-    '/^[a-z][a-z\d.-_]{4,19}', $username
+if (!preg_match(
+    '/^[a-z][a-z0-9\.\-_]{4,19}$/', $username
 )) {
-    var_dump($username);
-    die();
     $error = 'usernameInvalid';
 }
 if ($error !== null) {

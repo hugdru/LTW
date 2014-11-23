@@ -8,6 +8,11 @@ if (!validLogin()) {
     exit();
 }
 
+if ($_POST['csrf'] !== $_SESSION['csrf_token']) {
+    header('Location: user.php?error=csrf');
+    exit();
+}
+
 // Unset all of the session variables.
 $_SESSION = array();
 
