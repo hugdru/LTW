@@ -2,13 +2,9 @@ h1, h2, h3, h4, h5, h6 {
     font-family: Georgia, serif;
 }
 
-h1 {
-    font-size: 3rem;
-}
-
 p {
     font-family: Arial, sans-serif;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     line-height: 135%;
 }
 
@@ -59,3 +55,28 @@ a {
     text-decoration: none;
 }
 
+main {
+    padding: 0.5rem;
+    background-color: #6B6B6B;
+}
+
+main article {
+    padding: 0.8rem;
+    background-color: #D9ECFF;
+    margin-bottom: 0.5rem;
+}
+
+main > article:first-child {
+    margin-top: 0;
+}
+
+main > article:last-child {
+    margin-bottom: 0;
+}
+
+main article > h2:first-child {
+    margin-top: 0;
+    font-size: 2rem;
+    font-style: italic;
+    color: #4253FF;
+}

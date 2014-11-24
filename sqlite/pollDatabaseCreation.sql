@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS PollEnquiry (
     dateCreation DATE NOT NULL,
     synopsis TEXT NOT NULL,
     conclusion TEXT,
-    generatedLink TEXT,
+    generatedKey TEXT,
     idUser INTEGER NOT NULL,
     idState INTEGER NOT NULL,
     idVisibility INTEGER NOT NULL,
@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS PollEnquiry (
         REFERENCES UserData(idUser)
             ON DELETE SET NULL
             ON UPDATE CASCADE,
+    UNIQUE (generatedKey),
     UNIQUE (name, dateCreation, idUser),
     PRIMARY KEY (idPollEnquiry));
 
