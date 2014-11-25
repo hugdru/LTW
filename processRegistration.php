@@ -65,7 +65,7 @@ if ($error !== null) {
 
 // Check if username is valid
 if (!preg_match(
-    '/^[a-z][a-z0-9\.\-_]{4,19}$/', $username
+    '/^[a-z][a-z0-9\.\-_]{3,19}$/', $username
 )) {
     $error = 'usernameInvalid';
 }

@@ -7,11 +7,11 @@ $loggedIn = validLogin();
 require_once 'templates/header.php';?>
 <main>
     <article>
-        <h2>Hello this is a heading</h1>
+        <h2>Hello this is a heading</h2>
         <p>This is a paragraph</p>
     </article>
     <article>
-        <h2>Hello this is a heading</h1>
+        <h2>Hello this is a heading</h2>
         <p>This is a paragraph</p>
     </article>
 </main>

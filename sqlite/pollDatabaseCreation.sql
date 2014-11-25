@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS Poll (
     idPoll INTEGER,
     image TEXT, -- file path
     options TEXT NOT NULL, -- opcoes e tipo de poll, formato json
+    description TEXT,
     idPollEnquiry INTEGER NOT NULL,
     FOREIGN KEY (idPollEnquiry)
         REFERENCES PollEnquiry(idPollEnquiry)

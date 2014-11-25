@@ -11,5 +11,6 @@ if (!($loggedIn = validLogin())) {
 require_once 'templates/header.php';?>
 <main>
     <?php echo '<h1>login success</h1>';?>
+    <a href="pollEnquiry.php?create">Create Poll Enquiry</a>
 </main>
 <?php require_once 'templates/footer.php';?>
