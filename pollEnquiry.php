@@ -104,13 +104,12 @@ if ($mode === 'create') {
             <div class="poolEnquiry-info">
                 <label>Name * <input type="text" name="name" required="required"></label>
                 <label>Visibility * <input type="text" name="visibility" required="required"></label>
-                <label>Date * <input type="date" name="dateCreation" required="required"></label>
                 <label>Synopsis <textarea name="synopsis" cols="30" rows="6" placeholder="What is this study about"></textarea></label>
+                <label>Image <input type="file" name="image"></label>
             </div>
             <div class="pollEnquiry-poll">
                 <h2>Poll 1</h2>
                 <label>Description <textarea name="description[]" cols="30" rows="6" placeholder="Explain what this pool is for"></textarea></label>
-                <label>Image <input type="file" name="image[]"></label>
                 <br>
                 <div>
                 </div>
