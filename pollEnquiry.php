@@ -102,16 +102,19 @@ if ($mode === 'create') {
     <div id="pollEnquiry">
         <form action="processPollEnquiryCreation.php" method="post" enctype="multipart/form-data">
             <div class="poolEnquiry-info">
-                <label>Name: <input type="text" name="name" required="required"></label>
-                <label>Visibility: <input type="text" name="visibility" required="required"></label>
-                <label>Date: <input type="date" name="dateCreation" required="required"></label>
-                <label>Synopsis: <textarea name="synopsis" cols="30" rows="6" placeholder="What is this study about"></textarea></label>
+                <label>Name * <input type="text" name="name" required="required"></label>
+                <label>Visibility * <input type="text" name="visibility" required="required"></label>
+                <label>Date * <input type="date" name="dateCreation" required="required"></label>
+                <label>Synopsis <textarea name="synopsis" cols="30" rows="6" placeholder="What is this study about"></textarea></label>
             </div>
             <div class="pollEnquiry-poll">
-                <label>Description: <textarea name="description0" cols="30" rows="6" placeholder="Explain what this pool is for"></textarea></label>
-                <label>Image: <input type="file" name="image0"></label>
+                <h2>Poll 1</h2>
+                <label>Description <textarea name="description[]" cols="30" rows="6" placeholder="Explain what this pool is for"></textarea></label>
+                <label>Image <input type="file" name="image[]"></label>
                 <br>
-                <label>Option Name:<input type="text" name="nameOption0"></label>
+                <div>
+                </div>
+                <label>Option Name <input type="text" name="nameOption"></label>
                 <input type="button" name="addOption" value="Add Option">
             </div>
             <input type="button" name="addPoll" value="Add Poll">
