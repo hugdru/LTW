@@ -1,15 +1,15 @@
 $().ready(loadDocument);
 
-var regexOptionRadio = /(\d)(\d+)$/i;
+var regexOptionRadio = /\[(\d)]\[(\d+)]$/i;
 var regexHeader = /^([\w\s]+)(\d+)$/;
 var regexHeaderNumber = /(\d+)$/;
 
 function loadDocument() {
-    $('#pollEnquiry').on('click', 'input[name="addOption"]', addOption);
-    $('#pollEnquiry').on('click', 'input[name="removeOption"]', removeOption);
-    $('#pollEnquiry').on('click', 'input[name="addPoll"]', addPoll);
-    $('#pollEnquiry').on('click', 'input[name="removePoll"]', removePoll);
-    $('#pollEnquiry').on('click', 'input[name="nameOption"]', function() {$(this).val('')});
+    $('#poll').on('click', 'input[name="addOption"]', addOption);
+    $('#poll').on('click', 'input[name="removeOption"]', removeOption);
+    $('#poll').on('click', 'input[name="addQuestion"]', addQuestion);
+    $('#poll').on('click', 'input[name="removeQuestion"]', removeQuestion);
+    $('#poll').on('click', 'input[name="nameOption"]', function() {$(this).val('');});
 }
 
 function addOption() {
@@ -42,7 +42,7 @@ function addOption() {
     }
 
     div.append(
-        '<label>' + previous.children('input').val() + ' <input type="radio" name="option' + cloneNumber + subIndex + '" value="' + previous.children('input').val() + '" checked></label><input type="button" name="removeOption" value="remove"><br>'
+        '<label>' + previous.children('input').val() + ' <input type="radio" name="option[' + cloneNumber + ']' + '[' + subIndex + ']" value="' + previous.children('input').val() + '" checked></label><input type="button" name="removeOption" value="remove"><br>'
     );
 
 }
@@ -54,7 +54,7 @@ function removeOption() {
         function() {
             $thiss = $(this);
             var match = $thiss.attr('name').match(regexOptionRadio) || [];
-            $thiss.attr('name', 'option' + match[1] + (match[2] - 1));
+            $thiss.attr('name', 'option[' + match[1] + '][' + (match[2] - 1) + ']');
         }
     );
 
@@ -63,7 +63,7 @@ function removeOption() {
     $this.remove();
 }
 
-function addPoll() {
+function addQuestion() {
     var $this = $(this);
     var previous = $this.prev();
     $this.before(previous.clone().
@@ -78,15 +78,15 @@ function addPoll() {
         ).end().find('div').children().remove().end().end()
     );
 
-    if ($this.prev().find('input[name="removePoll"]').length == 0) {
-        $this.prev().append('<input type="button" value="remove" name="removePoll">');
+    if ($this.prev().find('input[name="removeQuestion"]').length === 0) {
+        $this.prev().append('<input type="button" value="remove" name="removeQuestion">');
     }
 
 }
 
-function removePoll() {
+function removeQuestion() {
     var $this = $(this).parent();
-    $this.nextAll('.pollEnquiry-poll').each(
+    $this.nextAll('.poll-question').each(
         function() {
             var $this = $(this);
             var $thisHeader = $this.find('h2').first();

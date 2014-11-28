@@ -19,13 +19,14 @@ CREATE TABLE IF NOT EXISTS UserData (
     UNIQUE(email), UNIQUE(username),
     PRIMARY KEY (idUser));
 
-CREATE TABLE IF NOT EXISTS PollEnquiry (
-    idPollEnquiry INTEGER,
+CREATE TABLE IF NOT EXISTS Poll (
+    idPoll INTEGER,
     name TEXT NOT NULL,
     dateCreation DATE NOT NULL,
     synopsis TEXT NOT NULL,
     conclusion TEXT,
     generatedKey TEXT,
+    image TEXT, -- file path
     idUser INTEGER NOT NULL,
     idState INTEGER NOT NULL,
     idVisibility INTEGER NOT NULL,
@@ -43,7 +44,7 @@ CREATE TABLE IF NOT EXISTS PollEnquiry (
             ON UPDATE CASCADE,
     UNIQUE (generatedKey),
     UNIQUE (name, dateCreation, idUser),
-    PRIMARY KEY (idPollEnquiry));
+    PRIMARY KEY (idPoll));
 
 CREATE TABLE IF NOT EXISTS State (
     idState INTEGER,
@@ -55,31 +56,30 @@ CREATE TABLE IF NOT EXISTS Visibility (
     name TEXT NOT NULL,
     PRIMARY KEY (idVisibility));
 
-CREATE TABLE IF NOT EXISTS Poll (
-    idPoll INTEGER,
+CREATE TABLE IF NOT EXISTS Question (
+    idQuestion INTEGER,
     image TEXT, -- file path
-    options TEXT NOT NULL, -- opcoes e tipo de poll, formato json
+    options TEXT NOT NULL, -- opcoes, formato json
     description TEXT,
-    idPollEnquiry INTEGER NOT NULL,
-    FOREIGN KEY (idPollEnquiry)
-        REFERENCES PollEnquiry(idPollEnquiry)
+    idPoll INTEGER NOT NULL,
+    FOREIGN KEY (idPoll)
+        REFERENCES Poll(idPoll)
             ON DELETE SET NULL
             ON UPDATE CASCADE,
-    UNIQUE (image),
-    PRIMARY KEY (idPoll));
+    PRIMARY KEY (idQuestion));
 
-CREATE TABLE IF NOT EXISTS UserPollAnswer (
-    idPoll INTEGER,
+CREATE TABLE IF NOT EXISTS UserQuestionAnswer (
+    idQuestion INTEGER,
     idUser INTEGER,
     dataDone DATE NOT NULL,
     optionsSelected TEXT NOT NULL, -- options selected, in json format
     observations TEXT,
-    FOREIGN KEY (idPoll)
-        REFERENCES Poll(idPoll)
+    FOREIGN KEY (idQuestion)
+        REFERENCES Question(idQuestion)
             ON DELETE SET NULL
             ON UPDATE CASCADE,
     FOREIGN KEY (idUser)
         REFERENCES UserData(idUser)
             ON DELETE SET NULL
             ON UPDATE CASCADE,
-    PRIMARY KEY (idPoll, idUser));
+    PRIMARY KEY (idQuestion, idUser));

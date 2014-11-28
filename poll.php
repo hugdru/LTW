@@ -5,8 +5,8 @@ require_once 'codeIncludes/secureSession.php';
 require_once 'functions/validLogin.php';
 
 // Check if we received the correct GET
-$poolEnquiryId = reset($_GET);
-if ($poolEnquiryId === false) {
+$pollId = reset($_GET);
+if ($pollId === false) {
     header('Location: index.php?err=missingData');
     exit();
 }
@@ -25,21 +25,21 @@ if ((!$loggedIn) && $mode === 'create') {
 
 if ($mode !== 'create') {
     if ($mode === 'private') {
-        // Check if private pollEnquiry exists
+        // Check if private poll exists
         $stmt = $dbh->prepare(
-            'SELECT * FROM PollEnquiry
+            'SELECT * FROM Poll
             WHERE generatedKey = :generatedKey'
         );
-        $stmt->bindParam(':generatedKey', $poolEnquiryId);
+        $stmt->bindParam(':generatedKey', $pollId);
     } else if ($mode === 'public') {
-        // Check if public pollEnquiry exists and is really public
+        // Check if public poll exists and is really public
         $stmt = $dbh->prepare(
-            'SELECT * FROM PollEnquiry
+            'SELECT * FROM Poll
             WHERE
-                idPollEnquiry = :idPollEnquiry AND
+                idPoll = :idPoll AND
                 idState = (SELECT idState FROM State WHERE name LIKE public)'
         );
-        $stmt->bindParam(':idPollEnquiry', $poolEnquiryId);
+        $stmt->bindParam(':idPoll', $pollId);
     }
     $stmt->execute();
     $result = $stmt->fetch();
@@ -48,7 +48,7 @@ if ($mode !== 'create') {
         exit();
     }
 
-    // Check if the pollEnquiry is only:
+    // Check if the poll is only:
     // editable(owner);
     // viewable(submitted once);
     // or, submittable
@@ -59,12 +59,12 @@ if ($mode !== 'create') {
             $permission = 'editable';
         } else {
             $stmt = $dbh->prepare(
-                'SELECT * FROM UserPollAnswer
+                'SELECT * FROM UserQuestionAnswer
                 WHERE
-                    idPoll IN (SELECT idPoll FROM Poll WHERE idPollEnquiry = :poolEnquiryId)
+                    idQuestion IN (SELECT idQueston FROM Question WHERE idPoll = :pollId)
                     idUser = :userId'
             );
-            $stmt->bindParam(':poolEnquiryId', $result['idPollEnquiry']);
+            $stmt->bindParam(':pollId', $result['idPoll']);
             $stmt->bindParam(':userId', $_SESSION['idUser']);
             $stmt->execute();
 
@@ -77,12 +77,12 @@ if ($mode !== 'create') {
     } else {
         // For unauthenticated users
         // Look at the cookie
-        if (!isset($_COOKIE['pollEnquiries'])) {
+        if (!isset($_COOKIE['poll'])) {
             $permission = 'submittable';
         } else {
-            $parsedPollEnquiriesIds = explode(',', $_COOKIE['pollEnquiries']);
+            $parsedPollIds = explode(',', $_COOKIE['poll']);
             if (array_search(
-                $result['idPollEnquiry'], $parsedPollEnquiriesIds, true
+                $result['idPoll'], $parsedPollIds, true
             )) {
                 $permission = 'viewable';
             } else {
@@ -99,25 +99,25 @@ if ($mode === 'create') {
     // State is not here cause it will start as open
     // Not conclusion which is only activated when State is closed
     echo '
-    <div id="pollEnquiry">
-        <form action="processPollEnquiryCreation.php" method="post" enctype="multipart/form-data">
-            <div class="poolEnquiry-info">
+    <div id="poll">
+        <form action="processPollCreation.php" method="post" enctype="multipart/form-data">
+            <div class="poll-info">
                 <label>Name * <input type="text" name="name" required="required"></label>
                 <label>Visibility * <input type="text" name="visibility" required="required"></label>
                 <label>Synopsis <textarea name="synopsis" cols="30" rows="6" placeholder="What is this study about"></textarea></label>
                 <label>Image <input type="file" name="image"></label>
             </div>
-            <div class="pollEnquiry-poll">
-                <h2>Poll 1</h2>
-                <label>Description <textarea name="description[]" cols="30" rows="6" placeholder="Explain what this pool is for"></textarea></label>
+            <div class="poll-question">
+                <h2>Question 1</h2>
+                <label>Description <textarea name="description[]" cols="30" rows="6" placeholder="Explain what this question is for"></textarea></label>
                 <br>
                 <div>
                 </div>
                 <label>Option Name <input type="text" name="nameOption"></label>
                 <input type="button" name="addOption" value="Add Option">
             </div>
-            <input type="button" name="addPoll" value="Add Poll">
-            <div class="poolEnquiry-submit">
+            <input type="button" name="addQuestion" value="Add Question">
+            <div class="poll-submit">
                 <input type="submit" value="send" name="Send">
             </div>
         </form>
@@ -129,6 +129,6 @@ if ($mode === 'create') {
 if ($mode === 'create') {
     echo '
 <script src="https://code.jquery.com/jquery-1.11.1.min.js" defer></script>
-<script type="text/javascript" src="javascript/pollEnquiryCreate.js" defer></script>';
+<script type="text/javascript" src="javascript/pollCreate.js" defer></script>';
 }
 require_once 'templates/footer.php';?>
