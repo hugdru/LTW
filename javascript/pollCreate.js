@@ -9,15 +9,31 @@ function loadDocument() {
     $('#poll').on('click', 'input[name="removeOption"]', removeOption);
     $('#poll').on('click', 'input[name="addQuestion"]', addQuestion);
     $('#poll').on('click', 'input[name="removeQuestion"]', removeQuestion);
-    $('#poll').on('click', 'input[name="nameOption"]', function() {$(this).val('');});
 }
 
 function addOption() {
 
+    var exit = false;
     var previous = $(this).prev();
-    if (!previous.children('input').val()) return;
+    var optionName = previous.children('input').val();
+    if (!optionName) return;
 
     var div = previous.prev();
+    div.find('input[type="radio"]').each(
+        function() {
+            $this = $(this);
+            if ($this.val() === optionName) {
+                alert('There can\'t be two options with the same name');
+                exit = true;
+                return;
+            }
+        }
+    );
+    if (exit) {
+        previous.children('input').val('');
+        return;
+    }
+
     var match;
 
     var nameContent = div.find('input[type="radio"]').last().attr('name');
@@ -42,9 +58,10 @@ function addOption() {
     }
 
     div.append(
-        '<label>' + previous.children('input').val() + ' <input type="radio" name="option[' + cloneNumber + ']' + '[' + subIndex + ']" value="' + previous.children('input').val() + '" checked></label><input type="button" name="removeOption" value="remove"><br>'
+        '<label>' + optionName + ' <input type="radio" name="option[' + cloneNumber + ']' + '[' + subIndex + ']" value="' + optionName + '" checked></label><input type="button" name="removeOption" value="remove"><br>'
     );
 
+    previous.children('input').val('');
 }
 
 function removeOption() {
@@ -100,7 +117,7 @@ function removeQuestion() {
                     var $thiss = $(this);
                     var match = $thiss.attr('name').match(regexOptionRadio) || [];
                     if (match.length === 3) {
-                        $thiss.attr('name', match[1] + (match[2] - 1) + '[]');
+                        $thiss.attr('name', 'option[' + (match[1] - 1) + '][' + match[2] + ']');
                     }
                 }
             );

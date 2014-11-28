@@ -37,7 +37,7 @@ if ($mode !== 'create') {
             'SELECT * FROM Poll
             WHERE
                 idPoll = :idPoll AND
-                idState = (SELECT idState FROM State WHERE name LIKE public)'
+                idState = (SELECT idState FROM State WHERE name LIKE \'public\')'
         );
         $stmt->bindParam(':idPoll', $pollId);
     }
@@ -117,8 +117,9 @@ if ($mode === 'create') {
                 <input type="button" name="addOption" value="Add Option">
             </div>
             <input type="button" name="addQuestion" value="Add Question">
-            <div class="poll-submit">
-                <input type="submit" value="send" name="Send">
+            <div class="poll-submit">';
+        echo "<input type=\"hidden\" name=\"csrf\" value=\"${_SESSION['csrf_token']}\">";
+        echo '<input type="submit" value="send" name="Send">
             </div>
         </form>
     </div>';

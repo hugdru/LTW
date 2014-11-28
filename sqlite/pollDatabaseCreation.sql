@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Poll (
     idPoll INTEGER,
     name TEXT NOT NULL,
     dateCreation DATE NOT NULL,
-    synopsis TEXT NOT NULL,
+    synopsis TEXT,
     conclusion TEXT,
     generatedKey TEXT,
     image TEXT, -- file path
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS State (
     PRIMARY KEY (idState));
 
 CREATE TABLE IF NOT EXISTS Visibility (
-    idVisibility INTEGER AUTO INCREMENT,
+    idVisibility INTEGER,
     name TEXT NOT NULL,
     PRIMARY KEY (idVisibility));
 
