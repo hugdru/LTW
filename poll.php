@@ -10,8 +10,8 @@ if ($pollId === false) {
     header('Location: index.php?err=missingData');
     exit();
 }
-$mode = key($_GET);
-if ($mode !== 'public' && $mode !== 'private' && $mode !== 'create') {
+$mode = mb_strtolower(key($_GET));
+if (!preg_match('/^public|private|create$/', $mode, $temp__)) {
     header('Location: index.php?err=incorrectData');
     exit();
 }
@@ -37,14 +37,14 @@ if ($mode !== 'create') {
             'SELECT * FROM Poll
             WHERE
                 idPoll = :idPoll AND
-                idState = (SELECT idState FROM State WHERE name LIKE \'public\')'
+                idVisibility = (SELECT idVisibility FROM Visibility WHERE name LIKE \'public\')'
         );
         $stmt->bindParam(':idPoll', $pollId);
     }
     $stmt->execute();
     $result = $stmt->fetch();
     if (!$result) {
-        header('Location: index.php?err=invalidIdOrKey');
+        header('Location: index.php?err=invalidId');
         exit();
     }
 
@@ -53,7 +53,7 @@ if ($mode !== 'create') {
     // viewable(submitted once);
     // or, submittable
     // Only makes sense if user is not creating it
-    if ($validLogin) {
+    if ($loggedIn) {
         // For authenticated users
         if ($result['idUser'] === $_SESSION['idUser']) {
             $permission = 'editable';
@@ -95,15 +95,29 @@ if ($mode !== 'create') {
 require_once 'templates/header.php';?>
 <main>
 <?php
+
+$stmt = $dbh->query('SELECT name FROM Visibility');
+$visibility = $stmt->fetchAll();
+
 if ($mode === 'create') {
     // State is not here cause it will start as open
     // Not conclusion which is only activated when State is closed
     echo '
     <div id="poll">
-        <form action="processPollCreation.php" method="post" enctype="multipart/form-data">
+        <form action="processPollCreation.php" method="post" enctype="multipart/form-data" onsubmit="return verifyQuestions();">
             <div class="poll-info">
                 <label>Name * <input type="text" name="name" required="required"></label>
-                <label>Visibility * <input type="text" name="visibility" required="required"></label>
+                <fieldset style="display: inline"><legend>Visibility *</legend>';
+    $i = 0;
+    foreach ($visibility as $value) {
+        if ($i === 0) {
+            echo    "<label>{$value['name']} <input type=\"radio\" name=\"visibility\" value=\"{$value['name']}\" checked></label><br>";
+        } else {
+            echo    "<label>{$value['name']} <input type=\"radio\" name=\"visibility\" value=\"{$value['name']}\"></label><br>";
+        }
+        ++$i;
+    }
+    echo        '</fieldset>
                 <label>Synopsis <textarea name="synopsis" cols="30" rows="6" placeholder="What is this study about"></textarea></label>
                 <label>Image <input type="file" name="image"></label>
             </div>

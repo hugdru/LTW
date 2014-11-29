@@ -126,3 +126,24 @@ function removeQuestion() {
 
     $this.remove();
 }
+
+function verifyQuestions() {
+
+    var noError = true;
+    var $questionNumber = 1;
+
+    $('div.poll-question').each(
+        function() {
+            $this = $(this);
+            if ($this.find('input[type="radio"]').length === 0) {
+                noError = false;
+                alert('Missing option in Question ' + $questionNumber);
+                return;
+            }
+            ++$questionNumber;
+        }
+    );
+
+    return noError;
+}
+

@@ -57,7 +57,7 @@ if ($synopsis === '') {
 $description = $_POST['description'];
 
 // Same
-$option = $_POST['option'];
+$options = $_POST['option'];
 
 // Check if the image is really one
 $image = $_FILES['image']['tmp_name'];
@@ -117,31 +117,47 @@ try {
     }
 }
 
-if (!($lastId = $dbh->lastInsertId())) {
+if (!($pollId = $dbh->lastInsertId())) {
     header('Location: poll.php?create=errorInsert');
     exit();
 }
 
 // Insert the Questions in the database
-foreach ($_POST['option'] as $value) {
-
+$stmt = $dbh->prepare(
+    'INSERT INTO Question (options, description, idPoll)
+    VALUES (:option, :description, :idPoll)'
+);
+$i = 0;
+foreach ($options as $option) {
+    if ($description[$i] === '') {
+        $description[$i] = null;
+    }
+    $jsonOption = json_encode($option);
+    $stmt->bindParam(':option', $jsonOption);
+    $stmt->bindParam(':description', $description[$i]);
+    $stmt->bindParam(':idPoll', $pollId);
+    if (!$stmt->execute()) {
+        $dbh->rollBack();
+        header('Location: poll.php?create=errorInsert');
+        exit();
+    }
 }
 
 if ($image !== '') {
     // Put image in the filesystem
-    $imagePath = "images/$userId/$lastId/";
+    $imagePath = "images/$userId/$pollId/";
 
     if (mkdir($imagePath, 0744, true)) {
         // Put the image name in the database
         $dbh->prepare(
             'UPDATE Poll
             SET image = :imageFileName
-            WHERE idPoll = :lastId'
+            WHERE idPoll = :pollId'
         );
         if (!$stmt->execute(
             array(
                 ':imageFileName' => $imageFileName,
-                ':idPoll' => $lastId
+                ':idPoll' => $pollId
             )
         )) {
             goto cleanup;
@@ -152,16 +168,23 @@ if ($image !== '') {
         header('Location: poll.php?create=errorInsert');
         exit();
     }
+    // Place file in disk
+    $file = fopen($imagePath + $imageFileName, 'w');
+    if (!fwrite($file, $image)) {
+        $dbh->rollBack();
+        rmdir($imagePath);
+        header('Location: poll.php?create=errorFile');
+        exit();
+    }
+    fclose($file);
 }
 
-if ($generatedKey !== '') {
-    $pollId = $lastId;
-} else {
+if (isset($generatedKey)) {
     $pollId = $generatedKey;
 }
 
 $dbh->commit();
 
-header("Location: poll.php?{$_POST['visibility']}=$poolId");
+header("Location: poll.php?{$_POST['visibility']}=$pollId");
 exit();
 ?>

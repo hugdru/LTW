@@ -58,7 +58,6 @@ CREATE TABLE IF NOT EXISTS Visibility (
 
 CREATE TABLE IF NOT EXISTS Question (
     idQuestion INTEGER,
-    image TEXT, -- file path
     options TEXT NOT NULL, -- opcoes, formato json
     description TEXT,
     idPoll INTEGER NOT NULL,
