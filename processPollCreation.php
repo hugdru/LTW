@@ -61,10 +61,14 @@ $options = $_POST['option'];
 
 // Check if the image is really one
 $image = $_FILES['image']['tmp_name'];
+$imageFileName = null;
+
 if ($image !== '') {
     $imageInfo = getimagesize($image);
-    if (!$isImage) {
-        $error .= 'Image';
+    if (!$imageInfo) {
+        $error .= 'NotImage';
+    } else if ($_FILES['image']['size'] > 10000000) {
+        $error .= 'ImageSize';
     } else {
         $imageFileName = basename($_FILES['image']['name']);
     }
@@ -93,7 +97,7 @@ $dbh->beginTransaction();
 $stmt = $dbh->prepare(
     "INSERT INTO Poll
     (name, dateCreation, synopsis, conclusion, generatedKey, image, idUser, idState, idVisibility)
-    VALUES (:name, :dateCreation, :synopsis, null, :generatedKey, null, :idUser, :idState, :idVisibility)"
+    VALUES (:name, :dateCreation, :synopsis, null, :generatedKey, :image, :idUser, :idState, :idVisibility)"
 );
 try {
     $stmt->execute(
@@ -102,6 +106,7 @@ try {
             ':dateCreation' => date('Y-m-d'),
             ':synopsis' => $synopsis,
             ':generatedKey' => $generatedKey,
+            ':image' => $imageFileName,
             ':idUser' => $_SESSION['idUser'],
             ':idState' => $idState,
             ':idVisibility' => $idVisibility
@@ -143,40 +148,16 @@ foreach ($options as $option) {
     }
 }
 
-if ($image !== '') {
-    // Put image in the filesystem
-    $imagePath = "images/$userId/$pollId/";
+// Place file in disk
+$imagePath = "images/{$_SESSION['idUser']}/$pollId/";
+if (!is_dir($imagePath)) {
+    mkdir($imagePath, 0744, true);
+}
 
-    if (mkdir($imagePath, 0744, true)) {
-        // Put the image name in the database
-        $dbh->prepare(
-            'UPDATE Poll
-            SET image = :imageFileName
-            WHERE idPoll = :pollId'
-        );
-        if (!$stmt->execute(
-            array(
-                ':imageFileName' => $imageFileName,
-                ':idPoll' => $pollId
-            )
-        )) {
-            goto cleanup;
-        }
-    } else {
-        cleanup:
-        $dbh->rollBack();
-        header('Location: poll.php?create=errorInsert');
-        exit();
-    }
-    // Place file in disk
-    $file = fopen($imagePath + $imageFileName, 'w');
-    if (!fwrite($file, $image)) {
-        $dbh->rollBack();
-        rmdir($imagePath);
-        header('Location: poll.php?create=errorFile');
-        exit();
-    }
-    fclose($file);
+if (!move_uploaded_file($_FILES["image"]["tmp_name"], $imagePath . $imageFileName)) {
+    $dbh->rollBack();
+    header('Location: poll.php?create=errorFile');
+    exit();
 }
 
 if (isset($generatedKey)) {
