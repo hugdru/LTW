@@ -61,7 +61,7 @@ if ($mode !== 'create') {
             $stmt = $dbh->prepare(
                 'SELECT * FROM UserQuestionAnswer
                 WHERE
-                    idQuestion IN (SELECT idQueston FROM Question WHERE idPoll = :pollId)
+                    idQuestion IN (SELECT idQuestion FROM Question WHERE idPoll = :pollId) AND
                     idUser = :userId'
             );
             $stmt->bindParam(':pollId', $result['idPoll']);
@@ -96,10 +96,11 @@ require_once 'templates/header.php';?>
 <main>
 <?php
 
-$stmt = $dbh->query('SELECT name FROM Visibility');
-$visibility = $stmt->fetchAll();
-
 if ($mode === 'create') {
+
+    $stmt = $dbh->query('SELECT name FROM Visibility');
+    $visibility = $stmt->fetchAll();
+
     // State is not here cause it will start as open
     // Not conclusion which is only activated when State is closed
     echo '
@@ -137,6 +138,64 @@ if ($mode === 'create') {
             </div>
         </form>
     </div>';
+} else {
+
+    $stmt = $dbh->query("SELECT name FROM Visibility WHERE idVisibility = {$result['idVisibility']}");
+    $visibility = $stmt->fetch();
+    $visibility = $visibility['name'];
+
+    $stmt = $dbh->query("SELECT name FROM State WHERE idState = {$result['idState']}");
+    $state = $stmt->fetch();
+    $state = $state['name'];
+
+    $stmt = $dbh->query("SELECT idQuestion, options, description FROM Question WHERE idPoll = {$result['idPoll']}");
+    $options = $stmt->fetchAll();
+
+    if ($permission === 'submittable') {
+        echo '<div class="poll-info">';
+            echo "<h2>{$result['name']}</h2>
+                <p><span class=\"fields\">Visibility: </span>$visibility</p>
+                <p><span class=\"fields\">State: </span>$visibility</p>";
+        if ($result['synopsis']) {
+            $encodedSynopsis = htmlentities($result['synopsis']);
+            echo "<h3>Synopsis</h3>
+                <p>$encodedSynopsis</p>";
+        }
+        if ($result['image']) {
+            echo "<img src=\"images/{$result['idUser']}/{$result['idPoll']}/{$result['image']}\" alt=\"\">";
+        }
+        echo '</div>
+            <form action="processPollSubmit.php" method="post">';
+        foreach ($options as $key => $option) {
+            echo '<div class="poll-question">';
+            echo "<h3>Question " . ($key + 1) . "</h3>";
+            if ($option['description']) {
+                $encodedDescription = htmlentities($option['description']);
+                echo "<p>$encodedDescription</p>";
+            }
+            $decodedRadios = json_decode($option['options'], true);
+            echo '<div>';
+            foreach ($decodedRadios as $decodedRadio) {
+                echo "<label>$decodedRadio <input type=\"radio\" name=\"option$key\" value=\"$decodedRadio\"></label><br>";
+            }
+            echo '</div><input type="button" name="viewResult" value="View Result"></div>';
+        }
+        echo '<div class="poll-submit">';
+        echo "<input type=\"hidden\" name=\"csrf\" value=\"${_SESSION['csrf_token']}\">";
+        echo '<input type="submit" value="send" name="Send">
+        </div></form>';
+
+        // Do the necessary steps so user cant answer twice to the same poll
+        if ($loggedIn) {
+
+        } else {
+
+        }
+    } else if ($permission === 'viewable') {
+
+    } else if ($permission === 'editable') {
+
+    }
 }
 ?>
 </main>

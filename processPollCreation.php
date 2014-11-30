@@ -149,15 +149,17 @@ foreach ($options as $option) {
 }
 
 // Place file in disk
-$imagePath = "images/{$_SESSION['idUser']}/$pollId/";
-if (!is_dir($imagePath)) {
-    mkdir($imagePath, 0744, true);
-}
+if ($image !== '') {
+    $imagePath = "images/{$_SESSION['idUser']}/$pollId/";
+    if (!is_dir($imagePath)) {
+        mkdir($imagePath, 0744, true);
+    }
 
-if (!move_uploaded_file($_FILES["image"]["tmp_name"], $imagePath . $imageFileName)) {
-    $dbh->rollBack();
-    header('Location: poll.php?create=errorFile');
-    exit();
+    if (!move_uploaded_file($_FILES["image"]["tmp_name"], $imagePath . $imageFileName)) {
+        $dbh->rollBack();
+        header('Location: poll.php?create=errorFile');
+        exit();
+    }
 }
 
 if (isset($generatedKey)) {
