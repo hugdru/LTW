@@ -70,9 +70,8 @@ CREATE TABLE IF NOT EXISTS Question (
 CREATE TABLE IF NOT EXISTS UserQuestionAnswer (
     idQuestion INTEGER,
     idUser INTEGER,
-    dataDone DATE NOT NULL,
-    optionsSelected TEXT NOT NULL, -- options selected, in json format
-    observations TEXT,
+    dateDone DATE NOT NULL,
+    optionSelected TEXT NOT NULL, -- option selected, in json format
     FOREIGN KEY (idQuestion)
         REFERENCES Question(idQuestion)
             ON DELETE SET NULL

@@ -11,7 +11,7 @@ if ($pollId === false) {
     exit();
 }
 $mode = mb_strtolower(key($_GET));
-if (!preg_match('/^public|private|create$/', $mode, $temp__)) {
+if (!preg_match('/^public|private|create$/', $mode)) {
     header('Location: index.php?err=incorrectData');
     exit();
 }
@@ -83,7 +83,7 @@ if ($mode !== 'create') {
             $parsedPollIds = explode(',', $_COOKIE['poll']);
             if (array_search(
                 $result['idPoll'], $parsedPollIds, true
-            )) {
+            ) !== false) {
                 $permission = 'viewable';
             } else {
                 $permission = 'submittable';
@@ -151,11 +151,12 @@ if ($mode === 'create') {
     $stmt = $dbh->query("SELECT idQuestion, options, description FROM Question WHERE idPoll = {$result['idPoll']}");
     $options = $stmt->fetchAll();
 
+    echo '<div id="poll">';
     if ($permission === 'submittable') {
         echo '<div class="poll-info">';
             echo "<h2>{$result['name']}</h2>
                 <p><span class=\"fields\">Visibility: </span>$visibility</p>
-                <p><span class=\"fields\">State: </span>$visibility</p>";
+                <p><span class=\"fields\">State: </span>$state</p>";
         if ($result['synopsis']) {
             $encodedSynopsis = htmlentities($result['synopsis']);
             echo "<h3>Synopsis</h3>
@@ -165,7 +166,7 @@ if ($mode === 'create') {
             echo "<img src=\"images/{$result['idUser']}/{$result['idPoll']}/{$result['image']}\" alt=\"\">";
         }
         echo '</div>
-            <form action="processPollSubmit.php" method="post">';
+            <form action="processPollSubmit.php" method="post" onsubmit="return verifyRadios();">';
         foreach ($options as $key => $option) {
             echo '<div class="poll-question">';
             echo "<h3>Question " . ($key + 1) . "</h3>";
@@ -176,21 +177,17 @@ if ($mode === 'create') {
             $decodedRadios = json_decode($option['options'], true);
             echo '<div>';
             foreach ($decodedRadios as $decodedRadio) {
-                echo "<label>$decodedRadio <input type=\"radio\" name=\"option$key\" value=\"$decodedRadio\"></label><br>";
+                echo "<label>$decodedRadio <input type=\"radio\" name=\"option[$key]\" value=\"$decodedRadio\"></label><br>";
             }
-            echo '</div><input type="button" name="viewResult" value="View Result"></div>';
+            echo '</div></div>';
         }
         echo '<div class="poll-submit">';
+
         echo "<input type=\"hidden\" name=\"csrf\" value=\"${_SESSION['csrf_token']}\">";
+        echo "<input type=\"hidden\" name=\"pollId\" value=\"$pollId\">";
+        echo "<input type=\"hidden\" name=\"mode\" value=\"$mode\">";
         echo '<input type="submit" value="send" name="Send">
-        </div></form>';
-
-        // Do the necessary steps so user cant answer twice to the same poll
-        if ($loggedIn) {
-
-        } else {
-
-        }
+        </div></form></div>';
     } else if ($permission === 'viewable') {
 
     } else if ($permission === 'editable') {
@@ -199,10 +196,12 @@ if ($mode === 'create') {
 }
 ?>
 </main>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js" defer></script>
 <?php
 if ($mode === 'create') {
-    echo '
-<script src="https://code.jquery.com/jquery-1.11.1.min.js" defer></script>
-<script type="text/javascript" src="javascript/pollCreate.js" defer></script>';
+    echo '<script type="text/javascript" src="javascript/pollCreate.js" defer></script>';
+} else if ($permission === 'submittable') {
+    echo'<script type="text/javascript" src="javascript/pollSubmit.js" defer></script>';
 }
+
 require_once 'templates/footer.php';?>
