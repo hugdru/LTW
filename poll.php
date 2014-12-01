@@ -148,7 +148,7 @@ if ($mode === 'create') {
     $state = $stmt->fetch();
     $state = $state['name'];
 
-    $stmt = $dbh->query("SELECT idQuestion, options, description FROM Question WHERE idPoll = {$result['idPoll']}");
+    $stmt = $dbh->query("SELECT idQuestion, result, options, description FROM Question WHERE idPoll = {$result['idPoll']}");
     $options = $stmt->fetchAll();
 
     if ($permission === 'submittable') {
@@ -206,25 +206,33 @@ if ($mode === 'create') {
             echo "<img src=\"images/{$result['idUser']}/{$result['idPoll']}/{$result['image']}\" alt=\"\">";
         }
         echo '</div>';
-        //foreach ($options as $key => $option) {
-            //echo '<div class="poll-question">';
-            //echo "<h3>Question " . ($key + 1) . "</h3>";
-            //if ($option['description']) {
-                //$encodedDescription = htmlentities($option['description']);
-                //echo "<p>$encodedDescription</p>";
-            //}
-            //$decodedRadios = json_decode($option['options'], true);
-            //echo '<div>';
-            //echo '<table>
-                //<tr>';
-            //foreach ($decodedRadios as $decodedRadio) {
-                //echo "<td>$decodedRadio<td>
-                    //<td><img src=\"resources/images/poll.gif\" width=";
-            //}
-            //echo '</div>';
+        foreach ($options as $key => $option) {
+            echo '<div class="poll-question">';
+            echo "<h3>Question " . ($key + 1) . "</h3>";
+            if ($option['description']) {
+                $encodedDescription = htmlentities($option['description']);
+                echo "<p>$encodedDescription</p>";
+            }
+            $decodedRadios = json_decode($option['options'], true);
+            $decodedResult = json_decode($option['result'], true);
 
-        //}
-        echo '</div>';
+            $total = 0;
+            foreach ($decodedResult as $dr_) {
+                $total += $dr_;
+            }
+
+            echo '<div><table>';
+
+            $i = 0;
+            foreach ($decodedRadios as $decodedRadio) {
+                $percenRadio = 100 * round($decodedResult[$i]/$total, 2);
+                echo '<tr><td>' . $decodedRadio . '</td>' .
+                    '<td><img src="resources/images/poll.gif" width="' . $percenRadio . '" height="20" alt="">' . $percenRadio . '&percnt;</td></tr>';
+                ++$i;
+            }
+            echo '</table></div>';
+        }
+        echo '</div></div></div>';
 
     } else if ($permission === 'editable') {
 
