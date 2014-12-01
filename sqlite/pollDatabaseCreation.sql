@@ -81,3 +81,12 @@ CREATE TABLE IF NOT EXISTS UserQuestionAnswer (
             ON DELETE SET NULL
             ON UPDATE CASCADE,
     PRIMARY KEY (idQuestion, idUser));
+
+CREATE TABLE IF NOT EXISTS UnauthenticatedQuestionAnswer (
+    idQuestion INTEGER,
+    dateDone DATE NOT NULL,
+    optionSelected TEXT NOT NULL, -- option selected, in json format
+    FOREIGN KEY (idQuestion)
+        REFERENCES Question(idQuestion)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE);

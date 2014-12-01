@@ -88,7 +88,7 @@ if ($loggedIn) {
         exit();
     }
 } else {
-    if (isset($_COOKIE['poll'])) {
+    if (($cookieSet = isset($_cookie['poll']))) {
         $parsedPollIds = explode(',', $_COOKIE['poll']);
         if (array_search(
             $_POST['pollId'], $parsedPollIds, true
@@ -99,10 +99,16 @@ if ($loggedIn) {
     }
 }
 
+$arrayQuestions = explode(',', $stringQuestions);
+
+$stmtVerifyRadio = $dbh->prepare(
+    'SELECT options FROM Question
+    WHERE idQuestion = :idQuestion'
+);
+
 $dbh->beginTransaction();
 // Do the necessary steps so user cant answer twice to the same poll
 if ($loggedIn) {
-
     $stmt = $dbh->prepare(
         'INSERT INTO UserQuestionAnswer
             (idQuestion, idUser, dateDone, optionSelected)
@@ -111,13 +117,6 @@ if ($loggedIn) {
     );
     $stmt->bindParam(':idUser', $_SESSION['idUser']);
     $stmt->bindValue(':dateDone', date('Y-m-d'));
-
-    $stmtVerifyRadio = $dbh->prepare(
-        'SELECT options FROM Question
-        WHERE idQuestion = :idQuestion'
-    );
-
-    $arrayQuestions = explode(',', $stringQuestions);
 
     foreach ($arrayQuestions as $key => $question) {
         $stmtVerifyRadio->bindParam(':idQuestion', $question);
@@ -155,9 +154,55 @@ if ($loggedIn) {
         }
     }
 } else {
+    if (!$cookieSet) {
+        setcookie('poll', $result['idPoll'], time() + (86400 * 180), '/');
+    } else {
+        $_COOKIE['poll'] .= ",{$result['idPoll']}";
+    }
+    $stmt = $dbh->prepare(
+        'INSERT INTO UnauthenticatedQuestionAnswer
+            (idQuestion, dateDone, optionSelected)
+        VALUES
+            (:idQuestion, :dateDone, :optionSelected)'
+    );
+    $stmt->bindValue(':dateDone', date('Y-m-d'));
 
+    foreach ($arrayQuestions as $key => $question) {
+        $stmtVerifyRadio->bindParam(':idQuestion', $question);
+        $stmtVerifyRadio->execute();
+        if (!($options = $stmtVerifyRadio->fetch())) {
+            header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=missingDbData");
+            $dbh->rollBack();
+            exit();
+        }
+        $options = json_decode($options['options']);
+        if (array_search($_POST['option'][$key], $options, true) === false) {
+            header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=noSuchOption");
+            $dbh->rollBack();
+            exit();
+        }
+
+        $stmt->bindParam(':idQuestion', $question);
+        $stmt->bindValue(':optionSelected', json_encode($_POST['option'][$key]));
+        try {
+            if (!$stmt->execute()) {
+                header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=failedInsert");
+                $dbh->rollBack();
+                exit();
+            }
+        } catch (PDOException $e) {
+            switch ($e->errorInfo[0]) {
+            case '23000':
+                header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=duplicate");
+                $dbh->rollBack();
+                exit();
+            default:
+                $dbh->rollBack();
+                die('Unexpected database error');
+            }
+        }
+    }
 }
-
 $dbh->commit();
 
 die('SUCCESS');
