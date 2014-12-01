@@ -24,7 +24,7 @@ if (!$loggedIn) {
 } else {
     echo '
         <div id="login-area">
-            <form action="logout.php" method="post">
+            <form action="processLogout.php" method="post">
                 <input type="submit" value="logout">
     ';
     echo "

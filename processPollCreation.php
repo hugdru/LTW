@@ -11,7 +11,7 @@ if (!validLogin()) {
 }
 
 if ($_POST['csrf'] !== $_SESSION['csrf_token']) {
-    header('Location: poll.php?create=errorCsrf');
+    header('Location: pollCreate.php?err=Csrf');
     exit();
 }
 
@@ -20,7 +20,7 @@ if ( (!isset(
     , $_POST['description'], $_POST['option'], $_FILES)
      )
 ) {
-    header('location: poll.php?create=errorData');
+    header('location: pollCreate.php?err=Data');
     exit();
 }
 
@@ -74,7 +74,7 @@ if ($image !== '') {
     }
 }
 if ($error !== null) {
-    header("Location: poll.php?create=error$error");
+    header("Location: pollCreate.php?err=$error");
     exit();
 }
 
@@ -115,7 +115,7 @@ try {
 } catch (PDOException $e) {
     switch ($e->errorInfo[0]) {
     case '23000':
-        header('Location: poll.php?create=errorDuplicate');
+        header('Location: pollCreate.php?err=Duplicate');
         exit();
     default:
         die('Unexpected database error');
@@ -123,7 +123,7 @@ try {
 }
 
 if (!($pollId = $dbh->lastInsertId())) {
-    header('Location: poll.php?create=errorInsert');
+    header('Location: pollCreate.php?err=Insert');
     exit();
 }
 
@@ -144,7 +144,7 @@ foreach ($options as $key =>$option) {
     $stmt->bindParam(':idPoll', $pollId);
     if (!$stmt->execute()) {
         $dbh->rollBack();
-        header('Location: poll.php?create=errorInsert');
+        header('Location: pollCreate.php?err=Insert');
         exit();
     }
 }
@@ -158,7 +158,7 @@ if ($image !== '') {
 
     if (!move_uploaded_file($_FILES["image"]["tmp_name"], $imagePath . $imageFileName)) {
         $dbh->rollBack();
-        header('Location: poll.php?create=errorFile');
+        header('Location: pollCreate.php?err=File');
         exit();
     }
 }

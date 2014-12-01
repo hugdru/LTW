@@ -5,90 +5,82 @@ require_once 'codeIncludes/secureSession.php';
 require_once 'functions/validLogin.php';
 
 // Check if we received the correct GET
-
 $pollId = reset($_GET);
 if ($pollId === false) {
     header('Location: index.php?err=missingData');
     exit();
 }
 $mode = mb_strtolower(key($_GET));
-if (!preg_match('/^public|private|create$/', $mode)) {
+if (!preg_match('/^public|private$/', $mode)) {
     header('Location: index.php?err=incorrectData');
     exit();
 }
 
-// Only registered users can create enquiries
-$loggedIn = validLogin();
-if ((!$loggedIn) && $mode === 'create') {
-    header('Location: index.php?err=login');
+if ($mode === 'private') {
+    // Check if private poll exists
+    $stmt = $dbh->prepare(
+        'SELECT * FROM Poll
+        WHERE generatedKey = :generatedKey'
+    );
+    $stmt->bindParam(':generatedKey', $pollId);
+} else if ($mode === 'public') {
+    // Check if public poll exists and is really public
+    $stmt = $dbh->prepare(
+        'SELECT * FROM Poll
+        WHERE
+            idPoll = :idPoll AND
+            idVisibility = (SELECT idVisibility FROM Visibility WHERE name LIKE \'public\')'
+    );
+    $stmt->bindParam(':idPoll', $pollId);
+}
+$stmt->execute();
+$pollQuery = $stmt->fetch();
+if (!$pollQuery) {
+    header('Location: index.php?err=invalidId');
     exit();
 }
 
-if ($mode !== 'create') {
-    if ($mode === 'private') {
-        // Check if private poll exists
-        $stmt = $dbh->prepare(
-            'SELECT * FROM Poll
-            WHERE generatedKey = :generatedKey'
-        );
-        $stmt->bindParam(':generatedKey', $pollId);
-    } else if ($mode === 'public') {
-        // Check if public poll exists and is really public
-        $stmt = $dbh->prepare(
-            'SELECT * FROM Poll
-            WHERE
-                idPoll = :idPoll AND
-                idVisibility = (SELECT idVisibility FROM Visibility WHERE name LIKE \'public\')'
-        );
-        $stmt->bindParam(':idPoll', $pollId);
-    }
-    $stmt->execute();
-    $result = $stmt->fetch();
-    if (!$result) {
-        header('Location: index.php?err=invalidId');
-        exit();
-    }
+$loggedIn = validLogin();
 
-    // Check if the poll is only:
-    // editable(owner);
-    // viewable(submitted once);
-    // or, submittable
-    // Only makes sense if user is not creating it
-    if ($loggedIn) {
-        // For authenticated users
-        if ($result['idUser'] === $_SESSION['idUser']) {
-            $permission = 'editable';
-        } else {
-            $stmt = $dbh->prepare(
-                'SELECT * FROM UserQuestionAnswer
-                WHERE
-                    idQuestion IN (SELECT idQuestion FROM Question WHERE idPoll = :pollId) AND
-                    idUser = :userId'
-            );
-            $stmt->bindParam(':pollId', $result['idPoll']);
-            $stmt->bindParam(':userId', $_SESSION['idUser']);
-            $stmt->execute();
-
-            if ($stmt->fetch()) {
-                $permission = 'viewable';
-            } else {
-                $permission = 'submittable';
-            }
-        }
+// Check if the poll is only:
+// editable(owner);
+// viewable(submitted once);
+// or, answerable
+// Only makes sense if user is not creating it
+if ($loggedIn) {
+    // For authenticated users
+    if ($pollQuery['idUser'] === $_SESSION['idUser']) {
+        $permission = 'editable';
     } else {
-        // For unauthenticated users
-        // Look at the cookie
-        if (!isset($_COOKIE['poll'])) {
-            $permission = 'submittable';
+        $stmt = $dbh->prepare(
+            'SELECT * FROM UserQuestionAnswer
+            WHERE
+                idQuestion IN (SELECT idQuestion FROM Question WHERE idPoll = :pollId) AND
+                idUser = :userId'
+        );
+        $stmt->bindParam(':pollId', $pollQuery['idPoll']);
+        $stmt->bindParam(':userId', $_SESSION['idUser']);
+        $stmt->execute();
+
+        if ($stmt->fetch()) {
+            $permission = 'viewable';
         } else {
-            $parsedPollIds = explode(',', $_COOKIE['poll']);
-            if (array_search(
-                $result['idPoll'], $parsedPollIds, true
-            ) !== false) {
-                $permission = 'viewable';
-            } else {
-                $permission = 'submittable';
-            }
+            $permission = 'answerable';
+        }
+    }
+} else {
+    // For unauthenticated users
+    // Look at the cookie
+    if (!isset($_COOKIE['poll'])) {
+        $permission = 'answerable';
+    } else {
+        $parsedPollIds = explode(',', $_COOKIE['poll']);
+        if (array_search(
+            $pollQuery['idPoll'], $parsedPollIds, true
+        ) !== false) {
+            $permission = 'viewable';
+        } else {
+            $permission = 'answerable';
         }
     }
 }
@@ -97,212 +89,43 @@ require_once 'templates/header.php';?>
 <main>
 <?php
 
-if ($mode === 'create') {
+$isEditMode = isset($_GET['edit']);
 
-    $stmt = $dbh->query('SELECT name FROM Visibility');
-    $visibility = $stmt->fetchAll();
+$stmt = $dbh->query("SELECT name FROM Visibility WHERE idVisibility = {$pollQuery['idVisibility']}");
+$visibility = $stmt->fetch();
+$visibility = $visibility['name'];
 
-    // State is not here cause it will start as open
-    // Not conclusion which is only activated when State is closed
-    echo '
-    <div id="poll">
-        <form action="processPollCreation.php" method="post" enctype="multipart/form-data" onsubmit="return verifyQuestions();">
-            <div class="poll-info">
-                <label>Name * <input type="text" name="name" required="required"></label>
-                <fieldset style="display: inline"><legend>Visibility *</legend>';
-    $i = 0;
-    foreach ($visibility as $value) {
-        if ($i === 0) {
-            echo    "<label>{$value['name']} <input type=\"radio\" name=\"visibility\" value=\"{$value['name']}\" checked></label><br>";
-        } else {
-            echo    "<label>{$value['name']} <input type=\"radio\" name=\"visibility\" value=\"{$value['name']}\"></label><br>";
-        }
-        ++$i;
-    }
-    echo        '</fieldset>
-                <label>Synopsis <textarea name="synopsis" cols="30" rows="6" placeholder="What is this study about"></textarea></label>
-                <label>Image <input type="file" name="image"></label>
-            </div>
-            <div class="poll-question">
-                <h2>Question 1</h2>
-                <label>Description <textarea name="description[]" cols="30" rows="6" placeholder="Explain what this question is for"></textarea></label>
-                <br>
-                <div>
-                </div>
-                <label>Option Name <input type="text" name="nameOption"></label>
-                <input type="button" name="addOption" value="Add Option">
-            </div>
-            <input type="button" name="addQuestion" value="Add Question">
-            <div class="poll-submit">';
-        echo "<input type=\"hidden\" name=\"csrf\" value=\"${_SESSION['csrf_token']}\">";
-        echo '<input type="submit" value="send" name="Send">
-            </div>
-        </form>
-    </div>';
-} else {
+$stmt = $dbh->query("SELECT name FROM State WHERE idState = {$pollQuery['idState']}");
+$state = $stmt->fetch();
+$state = $state['name'];
 
-    $isEditMode = isset($_GET['edit']);
+$stmt = $dbh->query("SELECT idQuestion, result, options, description FROM Question WHERE idPoll = {$pollQuery['idPoll']}");
+$questionsQuery = $stmt->fetchAll();
 
-    $stmt = $dbh->query("SELECT name FROM Visibility WHERE idVisibility = {$result['idVisibility']}");
-    $visibility = $stmt->fetch();
-    $visibility = $visibility['name'];
+if ($permission === 'answerable') {
 
-    $stmt = $dbh->query("SELECT name FROM State WHERE idState = {$result['idState']}");
-    $state = $stmt->fetch();
-    $state = $state['name'];
+    include_once 'codeIncludes/pollAnswerable.php';
 
-    $stmt = $dbh->query("SELECT idQuestion, result, options, description FROM Question WHERE idPoll = {$result['idPoll']}");
-    $options = $stmt->fetchAll();
+} else if (($permission === 'viewable') || ($permission === 'editable' && !$isEditMode)) {
 
-    if ($permission === 'submittable') {
+    include_once 'codeIncludes/pollViewable.php';
 
-        echo '<div id="poll">';
-        echo '<div class="poll-info">';
-            echo "<h2>{$result['name']}</h2>
-                <p><span class=\"fields\">Visibility: </span>$visibility</p>
-                <p><span class=\"fields\">State: </span>$state</p>";
-        if ($result['synopsis']) {
-            $encodedSynopsis = htmlentities($result['synopsis']);
-            echo "<h3>Synopsis</h3>
-                <p>$encodedSynopsis</p>";
-        }
-        if ($result['image']) {
-            echo "<img src=\"images/{$result['idUser']}/{$result['idPoll']}/{$result['image']}\" alt=\"\">";
-        }
-        echo '</div>
-            <form action="processPollSubmit.php" method="post" onsubmit="return verifyRadios();">';
-        foreach ($options as $key => $option) {
-            echo '<div class="poll-question">';
-            echo "<h3>Question " . ($key + 1) . "</h3>";
-            if ($option['description']) {
-                $encodedDescription = htmlentities($option['description']);
-                echo "<p>$encodedDescription</p>";
-            }
-            $decodedRadios = json_decode($option['options'], true);
-            echo '<div>';
-            foreach ($decodedRadios as $decodedRadio) {
-                echo "<label>$decodedRadio <input type=\"radio\" name=\"option[$key]\" value=\"$decodedRadio\"></label><br>";
-            }
-            echo '</div></div>';
-        }
-        echo '<div class="poll-submit">';
+} else if ($permission === 'editable' && $isEditMode) {
 
-        echo "<input type=\"hidden\" name=\"csrf\" value=\"${_SESSION['csrf_token']}\">";
-        echo "<input type=\"hidden\" name=\"pollId\" value=\"$pollId\">";
-        echo "<input type=\"hidden\" name=\"mode\" value=\"$mode\">";
-        echo '<input type="submit" value="send" name="Send">
-        </div></form></div>';
+    include_once 'codeIncludes/pollEditMode.php';
 
-    } else if (($permission === 'viewable') || ($permission === 'editable' && !$isEditMode)) {
-
-        echo '<div id="poll">';
-        if ($permission === 'editable') {
-            echo '<input type="button" name="edit" value="edit">';
-        }
-        echo '<div class="poll-info">';
-            echo "<h2>{$result['name']}</h2>
-                <p><span class=\"fields\">Visibility: </span>$visibility</p>
-                <p><span class=\"fields\">State: </span>$state</p>";
-        if ($result['synopsis']) {
-            $encodedSynopsis = htmlentities($result['synopsis']);
-            echo "<h3>Synopsis</h3>
-                <p>$encodedSynopsis</p>";
-        }
-        if ($result['image']) {
-            echo "<img src=\"images/{$result['idUser']}/{$result['idPoll']}/{$result['image']}\" alt=\"\">";
-        }
-        echo '</div>';
-        foreach ($options as $key => $option) {
-            echo '<div class="poll-question">';
-            echo "<h3>Question " . ($key + 1) . "</h3>";
-            if ($option['description']) {
-                $encodedDescription = htmlentities($option['description']);
-                echo "<p>$encodedDescription</p>";
-            }
-            $decodedRadios = json_decode($option['options'], true);
-            $decodedResult = json_decode($option['result'], true);
-
-            $total = 0;
-            foreach ($decodedResult as $dr_) {
-                $total += $dr_;
-            }
-
-            echo '<div><table>';
-
-            $i = 0;
-            foreach ($decodedRadios as $decodedRadio) {
-                $percenRadio = 100 * round($decodedResult[$i]/$total, 2);
-                echo '<tr><td>' . $decodedRadio . '</td>' .
-                    '<td><img src="resources/images/poll.gif" width="' . $percenRadio . '" height="20" alt="">' . $percenRadio . '&percnt;</td></tr>';
-                ++$i;
-            }
-            echo '</table></div>';
-        }
-        echo '</div></div></div>';
-
-    } else if ($permission === 'editable' && $isEditMode) {
-
-        $stmt = $dbh->query('SELECT name FROM Visibility');
-        $visibility = $stmt->fetchAll();
-
-        // State is not here cause it will start as open
-        // Not conclusion which is only activated when State is closed
-        echo '
-        <div id="poll">
-            <form action="processPollCreation.php" method="post" enctype="multipart/form-data" onsubmit="return verifyQuestions();">
-                <div class="poll-info">';
-        echo '<label>Name * <input type="text" name="name" required="required" value="' . htmlentities($result['name'])  . '"></label>';
-        echo '<fieldset style="display: inline"><legend>Visibility *</legend>';
-
-        foreach ($visibility as $key => $value) {
-            echo    "<label>{$value['name']} <input type=\"radio\" name=\"visibility\" value=\"{$value['name']}\" ";
-            if (($key + 1) == $result['idVisibility']) {
-                echo 'checked';
-                $defaultCheckedRadio = $key;
-            }
-            echo '></label><br>';
-        }
-        echo '</fieldset>';
-        echo    '<label>Synopsis <textarea name="synopsis" cols="30" rows="6" placeholder="What is this study about">' . htmlentities($result['synopsis'])  . '</textarea></label>
-                <label>Image <input type="file" name="image"></label>
-                </div>';
-        foreach ($options as $key => $option) {
-            echo '<div class="poll-question">';
-            echo '<h2>Question ' . ($key + 1) . '</h2>';
-            echo '<label>Description <textarea name="description[]" cols="30" rows="6" placeholder="Explain what this question is for">' . htmlentities($option['description']) . '</textarea></label>
-                    <br>';
-                    $decodedRadios = json_decode($option['options']);
-            foreach ($decodedRadios as $subkey => $radio) {
-                echo '<div>';
-                echo '<label>' . $radio . ' <input type="radio" name="option[' . $key . ']' . '[' . $subkey . ']" value="' . $radio . '" checked></label><input type="button" name="removeOption" value="remove"><br>';
-                echo '</div>';
-            }
-            echo '<label>Option Name <input type="text" name="nameOption"></label>
-            <input type="button" name="addOption" value="Add Option">';
-            echo '</div>';
-        }
-                echo '<input type="button" name="addQuestion" value="Add Question">';
-                echo '<div class="poll-submit"><input type="hidden" name="csrf" value="' . $_SESSION['csrf_token'] .'">';
-                echo '<input type="submit" value="send" name="Send">
-                    </div>
-                </form>
-            </div>';
-
-    }
 }
 ?>
 </main>
 <script src="https://code.jquery.com/jquery-1.11.1.min.js" defer></script>
 <?php
-if ($mode === 'create') {
-    echo '<script type="text/javascript" src="javascript/pollCreate.js" defer></script>';
-} else if ($permission === 'submittable') {
-    echo '<script type="text/javascript" src="javascript/pollSubmit.js" defer></script>';
+if ($permission === 'answerable') {
+    echo '<script type="text/javascript" src="javascript/pollAnswer.js" defer></script>';
 } else if ($permission === 'viewable' || !$isEditMode) {
     echo '<script type="text/javascript" src="javascript/pollView.js" defer></script>';
 } else if ($permission === 'editable' && $isEditMode) {
-    echo '<script type="text/javascript" src="javascript/pollCreate.js" defer></script>';
-
+    echo '<script type="text/javascript" src="javascript/pollCreateAndUpdate.js" defer></script>';
 }
+require_once 'templates/footer.php';
+?>
 
-require_once 'templates/footer.php';?>
