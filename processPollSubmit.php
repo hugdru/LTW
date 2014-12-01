@@ -205,6 +205,7 @@ if ($loggedIn) {
 }
 $dbh->commit();
 
-die('SUCCESS');
+header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}");
+exit();
 
 ?>
