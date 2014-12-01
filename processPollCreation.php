@@ -132,16 +132,15 @@ $stmt = $dbh->prepare(
     'INSERT INTO Question (options, result, description, idPoll)
     VALUES (:option, :result, :description, :idPoll)'
 );
-$i = 0;
-foreach ($options as $option) {
-    if ($description[$i] === '') {
-        $description[$i] = null;
+foreach ($options as $key =>$option) {
+    if ($description[$key] === '') {
+        $description[$key] = null;
     }
     $jsonOption = json_encode($option);
     $jsonResult = json_encode(array_fill(0, count($option), 0));
     $stmt->bindParam(':option', $jsonOption);
     $stmt->bindValue(':result', $jsonResult);
-    $stmt->bindParam(':description', $description[$i]);
+    $stmt->bindParam(':description', $description[$key]);
     $stmt->bindParam(':idPoll', $pollId);
     if (!$stmt->execute()) {
         $dbh->rollBack();

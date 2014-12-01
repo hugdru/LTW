@@ -5,6 +5,7 @@ require_once 'codeIncludes/secureSession.php';
 require_once 'functions/validLogin.php';
 
 // Check if we received the correct GET
+
 $pollId = reset($_GET);
 if ($pollId === false) {
     header('Location: index.php?err=missingData');
@@ -140,6 +141,8 @@ if ($mode === 'create') {
     </div>';
 } else {
 
+    $isEditMode = isset($_GET['edit']);
+
     $stmt = $dbh->query("SELECT name FROM Visibility WHERE idVisibility = {$result['idVisibility']}");
     $visibility = $stmt->fetch();
     $visibility = $visibility['name'];
@@ -190,9 +193,12 @@ if ($mode === 'create') {
         echo '<input type="submit" value="send" name="Send">
         </div></form></div>';
 
-    } else if ($permission === 'viewable') {
+    } else if (($permission === 'viewable') || ($permission === 'editable' && !$isEditMode)) {
 
         echo '<div id="poll">';
+        if ($permission === 'editable') {
+            echo '<input type="button" name="edit" value="edit">';
+        }
         echo '<div class="poll-info">';
             echo "<h2>{$result['name']}</h2>
                 <p><span class=\"fields\">Visibility: </span>$visibility</p>
@@ -234,7 +240,53 @@ if ($mode === 'create') {
         }
         echo '</div></div></div>';
 
-    } else if ($permission === 'editable') {
+    } else if ($permission === 'editable' && $isEditMode) {
+
+        $stmt = $dbh->query('SELECT name FROM Visibility');
+        $visibility = $stmt->fetchAll();
+
+        // State is not here cause it will start as open
+        // Not conclusion which is only activated when State is closed
+        echo '
+        <div id="poll">
+            <form action="processPollCreation.php" method="post" enctype="multipart/form-data" onsubmit="return verifyQuestions();">
+                <div class="poll-info">';
+        echo '<label>Name * <input type="text" name="name" required="required" value="' . htmlentities($result['name'])  . '"></label>';
+        echo '<fieldset style="display: inline"><legend>Visibility *</legend>';
+
+        foreach ($visibility as $key => $value) {
+            echo    "<label>{$value['name']} <input type=\"radio\" name=\"visibility\" value=\"{$value['name']}\" ";
+            if (($key + 1) == $result['idVisibility']) {
+                echo 'checked';
+                $defaultCheckedRadio = $key;
+            }
+            echo '></label><br>';
+        }
+        echo '</fieldset>';
+        echo    '<label>Synopsis <textarea name="synopsis" cols="30" rows="6" placeholder="What is this study about">' . htmlentities($result['synopsis'])  . '</textarea></label>
+                <label>Image <input type="file" name="image"></label>
+                </div>';
+        foreach ($options as $key => $option) {
+            echo '<div class="poll-question">';
+            echo '<h2>Question ' . ($key + 1) . '</h2>';
+            echo '<label>Description <textarea name="description[]" cols="30" rows="6" placeholder="Explain what this question is for">' . htmlentities($option['description']) . '</textarea></label>
+                    <br>';
+                    $decodedRadios = json_decode($option['options']);
+            foreach ($decodedRadios as $subkey => $radio) {
+                echo '<div>';
+                echo '<label>' . $radio . ' <input type="radio" name="option[' . $key . ']' . '[' . $subkey . ']" value="' . $radio . '" checked></label><input type="button" name="removeOption" value="remove"><br>';
+                echo '</div>';
+            }
+            echo '<label>Option Name <input type="text" name="nameOption"></label>
+            <input type="button" name="addOption" value="Add Option">';
+            echo '</div>';
+        }
+                echo '<input type="button" name="addQuestion" value="Add Question">';
+                echo '<div class="poll-submit"><input type="hidden" name="csrf" value="' . $_SESSION['csrf_token'] .'">';
+                echo '<input type="submit" value="send" name="Send">
+                    </div>
+                </form>
+            </div>';
 
     }
 }
@@ -245,7 +297,12 @@ if ($mode === 'create') {
 if ($mode === 'create') {
     echo '<script type="text/javascript" src="javascript/pollCreate.js" defer></script>';
 } else if ($permission === 'submittable') {
-    echo'<script type="text/javascript" src="javascript/pollSubmit.js" defer></script>';
+    echo '<script type="text/javascript" src="javascript/pollSubmit.js" defer></script>';
+} else if ($permission === 'viewable' || !$isEditMode) {
+    echo '<script type="text/javascript" src="javascript/pollView.js" defer></script>';
+} else if ($permission === 'editable' && $isEditMode) {
+    echo '<script type="text/javascript" src="javascript/pollCreate.js" defer></script>';
+
 }
 
 require_once 'templates/footer.php';?>

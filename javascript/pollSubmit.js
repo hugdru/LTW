@@ -23,7 +23,3 @@ function verifyRadios() {
     return noError;
 }
 
-//function showResult() {
-
-//}
-
