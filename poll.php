@@ -151,8 +151,9 @@ if ($mode === 'create') {
     $stmt = $dbh->query("SELECT idQuestion, options, description FROM Question WHERE idPoll = {$result['idPoll']}");
     $options = $stmt->fetchAll();
 
-    echo '<div id="poll">';
     if ($permission === 'submittable') {
+
+        echo '<div id="poll">';
         echo '<div class="poll-info">';
             echo "<h2>{$result['name']}</h2>
                 <p><span class=\"fields\">Visibility: </span>$visibility</p>
@@ -188,7 +189,42 @@ if ($mode === 'create') {
         echo "<input type=\"hidden\" name=\"mode\" value=\"$mode\">";
         echo '<input type="submit" value="send" name="Send">
         </div></form></div>';
+
     } else if ($permission === 'viewable') {
+
+        echo '<div id="poll">';
+        echo '<div class="poll-info">';
+            echo "<h2>{$result['name']}</h2>
+                <p><span class=\"fields\">Visibility: </span>$visibility</p>
+                <p><span class=\"fields\">State: </span>$state</p>";
+        if ($result['synopsis']) {
+            $encodedSynopsis = htmlentities($result['synopsis']);
+            echo "<h3>Synopsis</h3>
+                <p>$encodedSynopsis</p>";
+        }
+        if ($result['image']) {
+            echo "<img src=\"images/{$result['idUser']}/{$result['idPoll']}/{$result['image']}\" alt=\"\">";
+        }
+        echo '</div>';
+        //foreach ($options as $key => $option) {
+            //echo '<div class="poll-question">';
+            //echo "<h3>Question " . ($key + 1) . "</h3>";
+            //if ($option['description']) {
+                //$encodedDescription = htmlentities($option['description']);
+                //echo "<p>$encodedDescription</p>";
+            //}
+            //$decodedRadios = json_decode($option['options'], true);
+            //echo '<div>';
+            //echo '<table>
+                //<tr>';
+            //foreach ($decodedRadios as $decodedRadio) {
+                //echo "<td>$decodedRadio<td>
+                    //<td><img src=\"resources/images/poll.gif\" width=";
+            //}
+            //echo '</div>';
+
+        //}
+        echo '</div>';
 
     } else if ($permission === 'editable') {
 

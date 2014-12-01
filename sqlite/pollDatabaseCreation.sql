@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS Visibility (
 CREATE TABLE IF NOT EXISTS Question (
     idQuestion INTEGER,
     options TEXT NOT NULL, -- opcoes, formato json
+    result TEXT NOT NULL, -- resultado, formato json
     description TEXT,
     idPoll INTEGER NOT NULL,
     FOREIGN KEY (idPoll)

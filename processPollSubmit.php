@@ -102,7 +102,13 @@ if ($loggedIn) {
 $arrayQuestions = explode(',', $stringQuestions);
 
 $stmtVerifyRadio = $dbh->prepare(
-    'SELECT options FROM Question
+    'SELECT options, result FROM Question
+    WHERE idQuestion = :idQuestion'
+);
+
+$stmtUpdateQuestion = $dbh->prepare(
+    'UPDATE Question
+    SET result = :result
     WHERE idQuestion = :idQuestion'
 );
 
@@ -121,13 +127,13 @@ if ($loggedIn) {
     foreach ($arrayQuestions as $key => $question) {
         $stmtVerifyRadio->bindParam(':idQuestion', $question);
         $stmtVerifyRadio->execute();
-        if (!($options = $stmtVerifyRadio->fetch())) {
+        if (!($questionFetch = $stmtVerifyRadio->fetch())) {
             header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=missingDbData");
             $dbh->rollBack();
             exit();
         }
-        $options = json_decode($options['options']);
-        if (array_search($_POST['option'][$key], $options, true) === false) {
+        $options = json_decode($questionFetch['options']);
+        if (($indexNeedle = array_search($_POST['option'][$key], $options, true)) === false) {
             header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=noSuchOption");
             $dbh->rollBack();
             exit();
@@ -152,13 +158,29 @@ if ($loggedIn) {
                 die('Unexpected database error');
             }
         }
+        // Update the Question result so we don't have to count them via selects
+        // Doing that on each page reload would be too expensive
+        $updatedResult = json_decode($questionFetch['result']);
+        ++$updatedResult[$indexNeedle];
+        $updatedResult = json_encode($updatedResult);
+
+        $stmtUpdateQuestion->bindParam(':result', $updatedResult);
+        $stmtUpdateQuestion->bindParam(':idQuestion', $question);
+
+        if (!$stmtUpdateQuestion->execute()) {
+            header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=failedUpdate");
+            $dbh->rollBack();
+            exit();
+        }
     }
 } else {
+
     if (!$cookieSet) {
         setcookie('poll', $result['idPoll'], time() + (86400 * 180), '/');
     } else {
         $_COOKIE['poll'] .= ",{$result['idPoll']}";
     }
+
     $stmt = $dbh->prepare(
         'INSERT INTO UnauthenticatedQuestionAnswer
             (idQuestion, dateDone, optionSelected)
@@ -170,13 +192,13 @@ if ($loggedIn) {
     foreach ($arrayQuestions as $key => $question) {
         $stmtVerifyRadio->bindParam(':idQuestion', $question);
         $stmtVerifyRadio->execute();
-        if (!($options = $stmtVerifyRadio->fetch())) {
+        if (!($questionFetch = $stmtVerifyRadio->fetch())) {
             header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=missingDbData");
             $dbh->rollBack();
             exit();
         }
-        $options = json_decode($options['options']);
-        if (array_search($_POST['option'][$key], $options, true) === false) {
+        $options = json_decode($questionFetch['options']);
+        if (($indexNeedle = array_search($_POST['option'][$key], $options, true)) === false) {
             header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=noSuchOption");
             $dbh->rollBack();
             exit();
@@ -200,6 +222,21 @@ if ($loggedIn) {
                 $dbh->rollBack();
                 die('Unexpected database error');
             }
+        }
+
+        // Update the Question result so we don't have to count them via selects
+        // Doing that on each page reload would be too expensive
+        $updatedResult = json_decode($questionFetch['result']);
+        ++$updatedResult[$indexNeedle];
+        $updatedResult = json_encode($updatedResult);
+
+        $stmtUpdateQuestion->bindParam(':result', $updatedResult);
+        $stmtUpdateQuestion->bindParam(':idQuestion', $question);
+
+        if (!$stmtUpdateQuestion->execute()) {
+            header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=failedUpdate");
+            $dbh->rollBack();
+            exit();
         }
     }
 }
