@@ -1,7 +1,5 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans);
-
 body {
-  background:url(http://www.saltlakedp.com/wp-content/uploads/2013/03/Gray-Comb-Texture1.jpg);
+  background-image: url("../images/background.jpg");
   width: 90%;
   margin: 0 auto;
   padding: 0;
@@ -87,7 +85,7 @@ header ul a {
 }
 
 #register-area form textarea {
-resize: none;
+  resize: none;
 }
 
 #register-area form #register {
@@ -98,4 +96,12 @@ resize: none;
   background: rgba(255, 255, 255, 0.3);
   color: #FFFFFF;
   border: 0px;
+}
+
+#register-area .errormsg {
+  display: none;
+  position: absolute;
+  color: rgba(255, 0, 0, 1.0);
+  background: rgba(0, 0, 0, 0);
+  margin: -50px 150px;
 }

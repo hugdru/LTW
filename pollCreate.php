@@ -37,7 +37,7 @@ foreach ($visibility as $key => $value) {
             </div>
             <div class="poll-question">
                 <h2>Question 1</h2>
-                <label>Description <textarea name="description[]" cols="30" rows="6" placeholder="Explain what this question is for"></textarea></label>
+                <label>Description <textarea name="description[]" cols="30" rows="4" placeholder="Explain what this question is for"></textarea></label>
                 <br>
                 <div>
                 </div>
