@@ -6,7 +6,7 @@ $visibilitiesQuery = $stmt->fetchAll();
 // Not conclusion which is only activated when State is closed
 echo '
 <div id="poll">
-<form action="processPollCreation.php" method="post" enctype="multipart/form-data" onsubmit="return verifyQuestions();">
+<form action="processPollUpdate.php" method="post" enctype="multipart/form-data" onsubmit="return verifyQuestions();">
 <div class="poll-info">
 <label>Name * <input type="text" name="name" required="required" value="' . htmlentities($pollQuery['name'])  . '"></label>
 <fieldset style="display: inline"><legend>Visibility *</legend>
