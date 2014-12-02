@@ -123,6 +123,7 @@ try {
 }
 
 if (!($pollId = $dbh->lastInsertId())) {
+    $dbh->rollBack();
     header('Location: pollCreate.php?err=Insert');
     exit();
 }

@@ -8,7 +8,7 @@ echo '
 <div id="poll">
 <form action="processPollUpdate.php" method="post" enctype="multipart/form-data" onsubmit="return verifyQuestions();">
 <div class="poll-info">
-<label>Name * <input type="text" name="name" required="required" value="' . htmlentities($pollQuery['name'])  . '"></label>
+<label>Name * <input type="text" name="name" value="' . htmlentities($pollQuery['name'])  . '"></label>
 <fieldset style="display: inline"><legend>Visibility *</legend>
 ';
 
@@ -43,7 +43,10 @@ foreach ($questionsQuery as $key => $questionQuery) {
     ';
 }
 echo '<input type="button" name="addQuestion" value="Add Question">
-<div class="poll-submit"><input type="hidden" name="csrf" value="' . $_SESSION['csrf_token'] .'">
+<div class="poll-submit">
+<input type="hidden" name="pollId" value="' . $pollId . '">
+<input type="hidden" name="mode" value="' . $mode . '">
+<input type="hidden" name="csrf" value="' . $_SESSION['csrf_token'] . '">
 <input type="submit" value="send" name="Send">
 </div>
 </form>

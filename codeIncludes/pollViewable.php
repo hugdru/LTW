@@ -42,5 +42,5 @@ foreach ($questionsQuery as $key => $questionQuery) {
     }
     echo '</table></div>';
 }
-echo '</div></div></div>';
+echo '</div></div>';
 ?>
