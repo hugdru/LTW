@@ -1,6 +1,6 @@
 <?php
 try {
-    $dbh = new PDO('sqlite:../sqlite/pollDatabase.db');
+    $dbh = new PDO('sqlite:sqlite/pollDatabase.db');
     $dbh->setAttribute(
         PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC
     );
