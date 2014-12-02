@@ -6,10 +6,10 @@ require_once 'functions/validLogin.php';
 $loggedIn = validLogin();
 require_once 'templates/header.php';?>
 <main>
-    <h1>Search by name</h1>
     <div id="search">
-      <input type="text" id="search_bar" name="search_bar" placeholder="Search">
-      <span id="search_results"> </span>
+      <h1>Search Poll</h1>
+      <input type="text" id="search_bar" name="search_bar" placeholder="Poll Name">
+      <div id="search_results"> </div>
     </div>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js" defer></script>
     <script type="text/javascript" src="javascript/register.js" defer></script>

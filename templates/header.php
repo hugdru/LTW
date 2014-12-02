@@ -14,7 +14,7 @@ if (!$loggedIn) {
         <form action="processLogin.php" method="post">
             <input type="email" name="email" required="required" autofocus placeholder="Email">
             <input type="password" name="password" required="required" placeholder="Password">
-            <input type="submit" value="send">
+            <input type="submit" value="login">
     ';
     echo "
             <input type=\"hidden\" name=\"csrf\" value=\"${_SESSION['csrf_token']}\">

@@ -18,7 +18,10 @@ require_once 'templates/header.php';?>
             <span  id="errormsg_username" class="errormsg">username already exists.</span>
             <input type="password" name="password" required="required" placeholder="Password">
             <input type="password" name="passwordAgain" required="required" placeholder="Repeat Password">
-            <textarea name="about" cols="30" rows="4" placeholder="My hobbies, some personal stuff I want to share with the community"></textarea>
+            <textarea name="about" cols="30" rows="3" placeholder="My hobbies, some personal stuff I want to share with the community"></textarea>
+            <span id="recaptcha">
+              <?php require_once 'codeIncludes/recaptchaClientSide.php'?>
+            </span>
             <input type="submit" id="register" value="Register">
         </form>
     </div>

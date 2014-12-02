@@ -16,13 +16,13 @@ function loadDocument() {
 function verifyEmail() {
   $.ajax({
     type: "POST",
-    url: "../ajaxIncludes/search.php",
+    url: "search.php",
     data: {'column':'email', 'value':$('#emailReg').val()},
     success: function(data) {
       if(data == 'failed')
         $('#errormsg_email').hide();
       else
-        $('#errormsg_username').show();
+        $('#errormsg_email').show();
       }
   });
 }
