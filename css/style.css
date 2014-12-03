@@ -153,3 +153,58 @@ header ul a {
 #search_results li:hover {
     background: #999;
 }
+
+.poll-question {
+  background: #FFFFFF;
+  max-width: 250px;
+  padding: 25px;
+  margin: 10px 0px;
+}
+
+.poll-question label {
+  display: inline-block;
+  font-size: 18px;
+  line-height: 25px;
+  cursor: pointer;
+  color: rgba( 0, 0, 0, 0.7);
+}
+
+.poll-question label:hover {
+  font-size: 20px;
+  color: rgba( 0, 0, 255, 0.7);
+}
+
+.poll-question input[type=radio] {
+  display: none;
+}
+
+.poll-question label:before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  float: left;
+  margin: 5px 10px;
+  background-color: #66CCFF;
+}
+
+.poll-question input[type=radio]:checked {
+  color: #F3F3F3;
+}
+
+#poll h2 {
+  margin: 40px 0px;
+  font-size: 26px;
+  color: rgba( 255, 255, 255, 0.8);
+}
+
+.poll-submit input[type=submit] {
+  border: 0px;
+  border-radius: 5px;
+  background: #0066FF;
+  font-size: 24px;
+  color: white;
+}
+
+.poll-submit input[type=submit]:hover {
+  opacity: 0.5;
+}
