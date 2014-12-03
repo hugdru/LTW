@@ -100,11 +100,13 @@ header ul a {
 #register-area .errormsg {
     float: left;
     clear: both;
-    color: rgba(255, 0, 0, 1.0);
-    background: rgba(0, 0, 0, 0);
+    /*color: rgba(255, 0, 0, 1.0);*/
+    background: rgba(207, 43, 45, 0.4);
     display: none;
     position: relative;
     left: 3rem;
+    max-width: 20rem;
+    padding: 0.1rem 0.5rem;
 }
 
 #register-area form #recaptcha {
@@ -116,7 +118,6 @@ header ul a {
     background-color: white;
     color: black;
 }
-
 
 #search {
     text-align: center;
@@ -207,4 +208,8 @@ header ul a {
 
 .poll-submit input[type=submit]:hover {
   opacity: 0.5;
+}
+
+.invalid {
+    box-shadow: 0 0 1.5px 1px red;
 }
