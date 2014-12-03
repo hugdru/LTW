@@ -9,7 +9,7 @@ if (validLogin()) {
     exit();
 }
 
-if (!$_POST['email'] || !$_POST['password']) {
+if (!isset($_POST['email'], $_POST['password'])) {
     header('Location: index.php?error=missingData');
     exit();
 }

@@ -27,8 +27,12 @@ if ( (!isset(
 $error = null;
 // Check validity of values with regex
 $name = $_POST['name'];
-if (!preg_match('/^[A-Z][\s\w]{5,60}$/', $name)) {
-    $error = 'Name';
+if ($name === '') {
+    $error = 'nameEmpty';
+} else if (strlen($name) < 5) {
+    $error = 'nameShort';
+} else if (!preg_match('/^[^0-9]{5}/', $name)) {
+    $error = 'nameFirst5NoNumber';
 }
 
 if ($_POST['visibility'] !== '') {

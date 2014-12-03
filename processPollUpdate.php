@@ -32,8 +32,13 @@ $mode = mb_strtolower($mode);
 $error = null;
 
 // Check validity of values with regex
-if (!preg_match('/^[A-Z][\s\w]{5,60}$/', $_POST['name'])) {
-    $error = 'Name';
+
+if ($_POST['name'] === '') {
+    $error = 'nameEmpty';
+} else if (strlen($_POST['name']) < 5) {
+    $error = 'nameShort';
+} else if (!preg_match('/^[^0-9]{5}/', $_POST['name'])) {
+    $error = 'nameFirst5NoNumber';
 }
 
 if ($_POST['visibility'] !== '') {
