@@ -9,7 +9,7 @@ if (validLogin()) {
     exit();
 }
 
-if (!$_POST['email'] || !$_POST['password'] || !$_POST['username']) {
+if (!isset($_POST['email'], $_POST['password'], $_POST['passwordAgain'], $_POST['username'])) {
     header('Location: register.php?error=missingData');
     exit();
 }
@@ -44,6 +44,8 @@ if ($passwordLength > 72) {
     $error = 'passwordLong';
 } else if ($passwordLength < 8) {
     $error = 'passwordShort';
+} else if ($password !== $_POST['passwordAgain']) {
+    $error = 'passwordMatch';
 } else {
     if (!preg_match('/[0-9]+/', $password)) {
         $error .= 'passwordNumber';

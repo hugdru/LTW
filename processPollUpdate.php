@@ -95,7 +95,7 @@ if (!$pollQuery) {
 }
 
 if ($error !== null) {
-    header("Location: poll.php?$mode=$pollId&edit&err=mode");
+    header("Location: poll.php?$mode=$pollId&edit&err=$error");
     exit();
 }
 
@@ -136,7 +136,7 @@ foreach ($questionsQuery as $keyQuestion => $questionQuery) {
     }
 
     foreach ($decodedRadios as $keyRadio => $decodedRadio) {
-        if (strcmp($decodedRadio, $_POST['option'][$keyQuestion][$keyRadio]) !== 0) {
+        if ($decodedRadio != $_POST['option'][$keyQuestion][$keyRadio]) {
             $resetAnswer = true;
             break;
         }
