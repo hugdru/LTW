@@ -7,7 +7,7 @@ $loggedIn = validLogin();
 require_once 'templates/header.php';?>
 <main>
     <div id="search">
-      <h1>Search Poll</h1>
+      <h2>Search Poll</h2>
       <input type="text" id="search_bar" name="search_bar" placeholder="Poll Name">
       <div id="search_results"> </div>
     </div>
