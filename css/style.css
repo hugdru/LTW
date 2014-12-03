@@ -156,15 +156,20 @@ header ul a {
 }
 
 .poll-question {
-  background: #FFFFFF;
-  max-width: 250px;
+  background: rgba(255, 255, 255, 0.8);
+  max-width: 700px;
   padding: 25px;
-  margin: 10px 0px;
+  margin: 5px 0px;
+}
+
+.poll-question h3 {
+  margin: 0px;
+  font-size: 18px;
 }
 
 .poll-question label {
   display: inline-block;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 25px;
   cursor: pointer;
   color: rgba( 0, 0, 0, 0.7);
@@ -179,23 +184,28 @@ header ul a {
   display: none;
 }
 
-.poll-question label:before {
+.poll-question input[type=radio] + label:before {
   content: "";
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
+  border-radius: 0.30em;
+  font-size: 24px;
   float: left;
   margin: 5px 10px;
   background-color: #66CCFF;
 }
 
-.poll-question input[type=radio]:checked {
-  color: #F3F3F3;
+input[type=radio]:checked + label:before {
+  content: "\2713";
+  color: white;
+  text-align: center;
+  line-height: 18px;
 }
 
 #poll h2 {
-  margin: 40px 0px;
-  font-size: 26px;
-  color: rgba( 255, 255, 255, 0.8);
+  margin: 20px 0px;
+  font-size: 28px;
+  color: rgba( 0, 0, 0, 0.8);
 }
 
 .poll-submit input[type=submit] {
@@ -207,7 +217,7 @@ header ul a {
 }
 
 .poll-submit input[type=submit]:hover {
-  opacity: 0.5;
+  opacity: 0.8;
 }
 
 .invalid {
