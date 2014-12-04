@@ -48,7 +48,7 @@ foreach ($visibility as $key => $value) {
             <input type="button" name="addQuestion" value="Add Question">
             <div class="poll-submit">
                 <input type="hidden" name="csrf" value="<?php echo $_SESSION['csrf_token']?>">
-                <input type="submit" value="send" name="Send">
+                <input type="submit" value="Submit" name="Send">
             </div>
         </form>
     </div>

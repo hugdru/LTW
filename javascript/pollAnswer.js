@@ -3,8 +3,6 @@ $().ready(loadDocument);
 function loadDocument() {
   $('#visibility:contains("Public")').css("background", "green");
   $('#visibility:contains("Private")').css("background", "red");
-  $('#state:contains("Open")').css("background", "blue");
-  $('#state:contains("Closed")').css("background", "grey");
 }
 
 function verifyRadios() {

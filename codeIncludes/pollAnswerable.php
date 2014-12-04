@@ -4,7 +4,7 @@ echo '
 <div class="poll-info">
 <div id="visibility">'. $visibility .'</div> <div id="poll-heading"> <h2>' . $pollQuery['name'] . '</h2>
 
-<div id="state">'. $state . ' </div> </div>';
+<label>Current Poll State:<div id="state">'. $state . ' </div> </div></label>';
 
 if ($pollQuery['synopsis']) {
     echo '<p id="synopsis">' . htmlentities($pollQuery['synopsis'])  . '</p>';
@@ -20,7 +20,7 @@ echo '
 ';
 $optionNum = 1;
 foreach ($questionsQuery as $key => $questionQuery) {
-    echo '<div class="poll-question">';//<h3>Question' . ($key + 1) . '</h3>';
+    echo '<div class="poll-question">'; //<h3>Question' . ($key + 1) . '</h3>';
     if ($questionQuery['description']) {
         echo '<h3>' . htmlentities($questionQuery['description']) . '</h3>';
     }

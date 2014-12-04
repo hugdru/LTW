@@ -10,12 +10,14 @@ function loadDocument() {
     $('#usernameReg').change(verifyUsername);
     $('form input[name="password"]').change(verifyPassword);
     $('form input[name="passwordAgain"]').change(verifyPasswords);
+    $('#search_bar').onload(getPolls());
     $('#search_bar').keyup(function() {
         if (globalTimeout !== null)
             clearTimeout(globalTimeout);
         globalTimeout = setTimeout(getPolls, 300);
     }
     );
+
 }
 
 function verifyEmail() {

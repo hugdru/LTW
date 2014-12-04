@@ -69,12 +69,12 @@ header ul a {
     color: rgba(255, 255, 255, 0.8);
 }
 
-#register-area form input, textarea, #recaptcha {
+.register-input, #register-area, #recaptcha {
     float: left;
     clear: both;
 }
 
-#register-area form input, textarea {
+.register-input {
     width: 20rem;
     margin: 0.5rem 3rem;
     padding: 0.5rem;
@@ -83,25 +83,25 @@ header ul a {
     border: 0;
 }
 
-#register-area form textarea{
+#register-area textarea {
     resize: none;
 }
 
-#register-area form #register {
+#register-area #register {
     width: 15rem;
     margin: 0.5rem 0;
     margin-left: 6rem;
+    font-size: 1.0rem;
     color: #FFFFFF;
 }
 
-#register-area form #register:hover {
+#register-area #register:hover {
     background-color:#0066FF;
 }
 
 #register-area .errormsg {
     float: left;
     clear: both;
-    /*color: rgba(255, 0, 0, 1.0);*/
     background: rgba(207, 43, 45, 0.4);
     display: none;
     position: relative;
@@ -110,14 +110,9 @@ header ul a {
     padding: 0.1rem 0.5rem;
 }
 
-#register-area form #recaptcha {
+#register-area #recaptcha {
     position: relative;
     left: 3.5rem;
-}
-
-#register-area form #recaptcha input {
-    background-color: white;
-    color: black;
 }
 
 #search {
@@ -131,7 +126,7 @@ header ul a {
 }
 
 #search_results {
-    width: 50rem;
+    width: 40rem;
     margin: 1rem auto;
     color: rgba(255, 255, 255, 1.0);
     background: rgba(0, 0, 0, 0.6);
@@ -144,7 +139,7 @@ header ul a {
 }
 
 #search_results li {
-    width: 50rem;
+    width: 40rem;
     list-style: none;
     text-decoration: none;
     color: #FFFFFF;
@@ -155,74 +150,60 @@ header ul a {
     background: #999;
 }
 
-#poll h2 {
-  margin: 20px 0px;
-  font-size: 28px;
+.poll-info h2 {
+  margin: 1.6rem 0;
+  font-size: 1.7rem;
   color: rgba( 0, 0, 0, 0.8);
   line-height: 100%;
 }
 
-.poll-info {
-  max-width: 750px;
-}
-
 .poll-info #visibility {
-  float: left;
-  width: 70px;
-  height: 25px;
+  width: 2.8rem;
+  height: 1.1rem;
   border-radius: 0.30em;
   text-align: center;
-  font-size: 18px;
+  font-size: 0.7rem;
   font-weight: bold;
   color: white;
+}
+
+.poll-info label {
+    font-size: 1.1rem;
 }
 
 .poll-info #state {
-  width: 70px;
-  height: 25px;
-  border-radius: 0.30em;
-  text-align: center;
-  font-size: 18px;
+  display: inline;
+  background: none;
+  margin: 0.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: white;
 }
 
 .poll-info #synopsis {
-  background: rgba(0, 0, 255, 0.6);
+  max-width: 50rem;
+  background: rgba(0, 0, 255, 0.4);
   color: white;
-  font-size: 18px;
+  font-size: 1.1rem;
 }
-
-
 
 .poll-question {
   background: rgba(255, 255, 255, 0.8);
-  max-width: 700px;
-  padding: 25px;
-  margin: 5px 0px;
+  max-width: 47rem;
+  padding: 1.5rem;
+  margin: 0.5rem 0;
 }
-
-#poll-view tr {
-  margin: 50px 50px;
-}
-
 
 .poll-question h3 {
-  margin: 0px;
-  font-size: 18px;
+  margin: 0;
+  font-size: 1.1rem;
 }
 
 .poll-question label {
   display: inline-block;
-  font-size: 16px;
-  line-height: 25px;
+  font-size: 1.2rem;
+  line-height: 1.4rem;
   cursor: pointer;
   color: rgba( 0, 0, 0, 0.7);
-}
-
-.poll-question label:hover {
-  font-size: 20px;
-  color: rgba( 0, 0, 255, 0.7);
 }
 
 .poll-question input[type=radio] {
@@ -231,12 +212,12 @@ header ul a {
 
 .poll-question input[type=radio] + label:before {
   content: "";
-  width: 16px;
-  height: 16px;
-  border-radius: 0.30em;
-  font-size: 24px;
   float: left;
-  margin: 5px 10px;
+  width: 1.0rem;
+  height: 1.0rem;
+  border-radius: 0.30em;
+  font-size: 1.2rem;
+  margin: 0.3rem 0.8rem;
   background-color: #66CCFF;
 }
 
@@ -244,21 +225,50 @@ input[type=radio]:checked + label:before {
   content: "\2713";
   color: white;
   text-align: center;
-  line-height: 18px;
+  line-height: 1.2rem;
 }
 
 .poll-submit input[type=submit] {
-  border: 0px;
-  border-radius: 5px;
+  border: 0;
+  border-radius: 0.3rem;
   background: #0066FF;
-  font-size: 24px;
+  font-size: 1.3rem;
   color: white;
 }
 
 .poll-submit input[type=submit]:hover {
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .invalid {
     box-shadow: 0 0 1.5px 1px red;
+}
+
+.poll-info {
+    display: inline;
+}
+
+.poll-info textarea {
+  resize: none;
+  width: 10rem;
+  height: 3rem;
+  padding: 0.5rem;
+  background:rgba(0,0,0,0.6);
+  color: #FFFFFF;
+  border: 0;
+}
+
+.poll-question textarea {
+    resize: none;
+    width: 30rem;
+    height: 3rem;
+    padding: 0.5rem;
+    background:rgba(0,0,0,0.6);
+    color: #FFFFFF;
+    border: 0;
+}
+
+.poll-question h2 {
+  margin: 0;
+  font-size: 1.2rem;
 }

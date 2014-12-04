@@ -7,7 +7,7 @@ echo '
 <div class="poll-info">
 <div id="visibility">'. $visibility .'</div>
 <h2>' . $pollQuery['name'] . '</h2>
-<div id="state">' . $state . '</div>';
+<label>Current Poll State:<div id="state">' . $state . '</div></label>';
 
 if ($pollQuery['synopsis']) {
     echo '<p id="synopsis">' . htmlentities($pollQuery['synopsis']) . '</p>';
@@ -37,7 +37,7 @@ foreach ($questionsQuery as $key => $questionQuery) {
         } else {
             $percenRadio = 100 * round($decodedResult[$key]/$total, 2);
         }
-        echo '<tr><td>' . $decodedRadio . '</td><td><img src="resources/images/poll.gif" width="' . $percenRadio . '" height="20" alt="">' . $percenRadio . '&percnt;</td></tr>';
+        echo '<tr><td>' . $decodedRadio . '</td><td><img src="resources/images/poll.gif" width="' . $percenRadio*5 . '" height="20" alt="">' . $percenRadio . '&percnt;</td></tr>';
     }
     echo '</table></div></div>';
 }
