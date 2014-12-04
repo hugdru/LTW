@@ -15,7 +15,7 @@ require_once 'templates/header.php';?>
             <input type="email" id="emailReg" name="email" required="required" autofocus placeholder="Email">
             <span  id="errormsg_email" class="errormsg">email already exists</span>
             <input type="text" id="usernameReg" name="username" required="required" placeholder="Username">
-            <span  id="errormsg_username" class="errormsg">username already exists</span>
+            <span  id="errormsg_username" class="errormsg"></span>
             <input type="password" id="passwordReg" name="password" required="required" placeholder="Password">
             <span  id="errormsg_password" class="errormsg"></span>
             <input type="password" id="passwordAgainReg" name="passwordAgain" required="required" placeholder="Repeat Password">

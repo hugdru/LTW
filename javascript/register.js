@@ -1,6 +1,7 @@
 $().ready(loadDocument);
 
 var passwordRegex = [[/[0-9]+/, 'number'], [/[a-z]+/, 'lower case letter'], [/[A-Z]+/, 'upper case letter'], [/\W+/, 'symbol']];
+var usernameRegex = [[/^[a-z]/i, 'first character must be a letter'], [/^[a-z][a-z0-9\.\-_]{3,19}$/i, 'the following characters must be a letter, number, dot, hyphen or underscore']];
 
 var globalTimeout = null;
 
@@ -32,15 +33,47 @@ function verifyEmail() {
 }
 
 function verifyUsername() {
+
+    $this = $(this);
+
+    var error = '';
+
+    username = $this.val();
+
+    if (username.length < 4) {
+        error += 'at least 4 characters';
+    }
+    if (username.length > 20) {
+        error += 'at most 20 characters';
+    }
+
+    var usernameRegexLength = usernameRegex.length;
+    for (var i = 0; i < usernameRegexLength; ++i) {
+        if (!username.match(usernameRegex[i][0])) {
+            if (error === '') {
+                error = error + usernameRegex[i][1];
+            } else {
+                error = error + ', ' + usernameRegex[i][1];
+            }
+        }
+    }
+
+    if (error === '') {
+        $this.removeClass('invalid').next().hide();
+    } else {
+        $this.addClass('invalid').next().html(error).css('display', 'inline-block');
+        return;
+    }
+
     $.ajax({
             type: 'POST',
             url: 'search.php',
-            data: {'column': 'username', 'value': $('#usernameReg').val()},
+            data: {'column': 'username', 'value': username},
             success: function(data) {
                 if (data == 'failed')
-                    $('#errormsg_username').hide().prev().removeClass('invalid');
+                    $this.removeClass('invalid').next().hide();
                 else
-                    $('#errormsg_username').css('display', 'inline-block').prev().addClass('invalid');
+                    $this.addClass('invalid').next().html('username already exists').css('display', 'inline-block');
             }
     });
 }
@@ -54,7 +87,9 @@ function verifyPassword() {
     password = $this.val();
 
     if (password.length < 8) {
-        error += '8 characters';
+        error += 'at least 8 characters';
+    } else if (password.length > 72) {
+        error += 'at most 72 characters';
     }
 
     var passwordRegexLength = passwordRegex.length;
