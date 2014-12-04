@@ -29,7 +29,8 @@ function addOption() {
 function addOptionAux(previous) {
 
     var exit = false;
-    var optionName = previous.prev().children('input').val();
+    var option = previous.prev().children('input');
+    var optionName = option.val();
     if (!optionName) return;
 
     var div = previous;
@@ -81,7 +82,7 @@ function addOptionAux(previous) {
         '<label>' + optionName + ' <input type="radio" name="option[' + cloneNumber + ']' + '[' + subIndex + ']" value="' + optionName + '" checked></label><input type="button" name="removeOption" value="remove"><br>'
     );
 
-    previous.children('input').val('');
+    option.val('');
 }
 
 function removeOption() {
@@ -155,7 +156,7 @@ function verifyQuestions() {
     $('div.poll-question').each(
         function() {
             $this = $(this);
-            if ($this.find('input[type="radio"]').length === 0) {
+            if ($this.find('input[type="radio"]').length < 2) {
                 noError = false;
                 alert('Missing option in Question ' + $questionNumber);
                 return;
@@ -181,7 +182,7 @@ function verifyName() {
         error += 'at most 100 characters';
     }
 
-    if (!name.match('/^[^0-9]{5}/')) {
+    if (!name.match(/^[^0-9]{5}/)) {
         if (error === '') {
             error += "first 5 characters can't be numbers";
         } else {
@@ -190,11 +191,10 @@ function verifyName() {
     }
 
     if (error === '') {
-        $this.removeClass('invalid').next().hide();
+        $this.removeClass('invalid').parent().next().hide();
     } else {
         $this.addClass('invalid').parent().next().html(error).css('display', 'inline-block');
     }
-    alert(error);
 }
 
 function enterOptionOnEnter(key) {

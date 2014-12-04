@@ -145,6 +145,12 @@ foreach ($options as $key =>$option) {
     if ($description[$key] === '') {
         $description[$key] = null;
     }
+    if (count($option) < 2) {
+        $dbh->rollBack();
+        header('Location: pollCreate.php?err=MissingOptions');
+        exit();
+    }
+
     $jsonOption = json_encode($option);
     $jsonResult = json_encode(array_fill(0, count($option), 0));
     $stmt->bindParam(':option', $jsonOption);

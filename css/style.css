@@ -99,15 +99,18 @@ header ul a {
     background-color:#0066FF;
 }
 
+.errormsg {
+    background: rgba(207, 43, 45, 0.4);
+    padding: 0.1rem 0.5rem;
+    max-width: 20rem;
+    display: none;
+}
+
 #register-area .errormsg {
     float: left;
     clear: both;
-    background: rgba(207, 43, 45, 0.4);
-    display: none;
     position: relative;
     left: 3rem;
-    max-width: 20rem;
-    padding: 0.1rem 0.5rem;
 }
 
 #register-area #recaptcha {
@@ -158,11 +161,9 @@ header ul a {
 }
 
 .poll-info #visibility {
-  width: 2.8rem;
-  height: 1.1rem;
   border-radius: 0.30em;
-  text-align: center;
-  font-size: 0.7rem;
+  vertical-align: middle;
+  font-size: 1.2rem;
   font-weight: bold;
   color: white;
 }

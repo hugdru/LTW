@@ -5,8 +5,7 @@ if ($permission === 'editable') {
 }
 echo '
 <div class="poll-info">
-<div id="visibility">'. $visibility .'</div>
-<h2>' . $pollQuery['name'] . '</h2>
+<h2><span id="visibility">' . $visibility . '</span> ' . $pollQuery['name'] . '</h2>
 <label>Current Poll State:<div id="state">' . $state . '</div></label>';
 
 if ($pollQuery['synopsis']) {
