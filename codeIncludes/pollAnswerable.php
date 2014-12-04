@@ -2,16 +2,12 @@
 echo '
 <div id="poll">
 <div class="poll-info">
-<h2>' . $pollQuery['name'] . '</h2>
-<p><span class="fields">Visibility: </span>' . $visibility . '</p>
-<p><span class="fields">State: </span>' . $state . '</p>
-';
+<div id="visibility">'. $visibility .'</div> <div id="poll-heading"> <h2>' . $pollQuery['name'] . '</h2>
+
+<div id="state">'. $state . ' </div> </div>';
 
 if ($pollQuery['synopsis']) {
-    echo '
-<h3>Synopsis</h3>
-<p>' . htmlentities($pollQuery['synopsis'])  . '</p>
-    ';
+    echo '<p id="synopsis">' . htmlentities($pollQuery['synopsis'])  . '</p>';
 }
 if ($pollQuery['image']) {
     echo "

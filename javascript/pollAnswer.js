@@ -1,7 +1,10 @@
 $().ready(loadDocument);
 
 function loadDocument() {
-    //$('#poll').on('click', 'input[type="radio"]', showResult);
+  $('#visibility:contains("Public")').css("background", "green");
+  $('#visibility:contains("Private")').css("background", "red");
+  $('#state:contains("Open")').css("background", "blue");
+  $('#state:contains("Closed")').css("background", "grey");
 }
 
 function verifyRadios() {
@@ -22,4 +25,3 @@ function verifyRadios() {
 
     return noError;
 }
-

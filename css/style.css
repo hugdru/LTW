@@ -154,12 +154,57 @@ header ul a {
     background: #999;
 }
 
+#poll h2 {
+  margin: 20px 0px;
+  font-size: 28px;
+  color: rgba( 0, 0, 0, 0.8);
+  line-height: 100%;
+}
+
+.poll-info {
+  max-width: 750px;
+}
+
+.poll-info #visibility {
+  float: left;
+  width: 70px;
+  height: 25px;
+  border-radius: 0.30em;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+.poll-info #state {
+  width: 70px;
+  height: 25px;
+  border-radius: 0.30em;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+.poll-info #synopsis {
+  background: rgba(0, 0, 255, 0.6);
+  color: white;
+  font-size: 18px;
+}
+
+
+
 .poll-question {
   background: rgba(255, 255, 255, 0.8);
   max-width: 700px;
   padding: 25px;
   margin: 5px 0px;
 }
+
+#poll-view tr {
+  margin: 50px 50px;
+}
+
 
 .poll-question h3 {
   margin: 0px;
@@ -199,12 +244,6 @@ input[type=radio]:checked + label:before {
   color: white;
   text-align: center;
   line-height: 18px;
-}
-
-#poll h2 {
-  margin: 20px 0px;
-  font-size: 28px;
-  color: rgba( 0, 0, 0, 0.8);
 }
 
 .poll-submit input[type=submit] {
