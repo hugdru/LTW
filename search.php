@@ -20,7 +20,7 @@ if (isset($value, $column)) {
           AND Visibility.name LIKE "Public"');
       } else if ($column == 'author') {
         $stmt = $dbh->prepare(
-        'SELECT Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
         FROM Poll, Visibility, UserData
         WHERE Poll.idUser = UserData.idUser
           AND UserData.username LIKE :value
@@ -28,7 +28,7 @@ if (isset($value, $column)) {
           AND Visibility.name LIKE "Public"');
       } else if ($column == 'date') {
         $stmt = $dbh->prepare(
-        'SELECT Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
         FROM Poll, Visibility, UserData
          WHERE Poll.dateCreation LIKE :value
          AND Poll.idUser = UserData.idUser
@@ -36,7 +36,7 @@ if (isset($value, $column)) {
          AND Visibility.name LIKE "Public"');
       } else if ($column == 'state') {
         $stmt = $dbh->prepare(
-        'SELECT Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
         FROM Poll, Visibility, UserData, State
         WHERE Poll.idState = State.idState
         AND State.name LIKE :value
