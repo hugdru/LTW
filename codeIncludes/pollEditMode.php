@@ -30,7 +30,7 @@ foreach ($questionsQuery as $key => $questionQuery) {
     echo '
     <div class="poll-question">
     <h2>Question ' . ($key + 1) . '</h2>
-    <label>Description <textarea name="description[]" cols="30" rows="6" placeholder="Explain what this question is for">' . htmlentities($questionQuery['description']) . '</textarea></label><br>
+    <label>Description<textarea name="description[]" cols="30" rows="6" placeholder="Explain what this question is for">' . htmlentities($questionQuery['description']) . '</textarea></label><br>
     ';
     $decodedRadios = json_decode($questionQuery['options']);
     foreach ($decodedRadios as $subkey => $radio) {
@@ -47,7 +47,7 @@ echo '<input type="button" name="addQuestion" value="Add Question">
 <input type="hidden" name="pollId" value="' . $pollId . '">
 <input type="hidden" name="mode" value="' . $mode . '">
 <input type="hidden" name="csrf" value="' . $_SESSION['csrf_token'] . '">
-<input type="submit" value="send" name="Send">
+<input type="submit" value="Submit" name="Send">
 </div>
 </form>
 </div>';

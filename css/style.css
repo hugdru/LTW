@@ -69,12 +69,12 @@ header ul a {
     color: rgba(255, 255, 255, 0.8);
 }
 
-#register-area form input, textarea, #recaptcha {
+.register-input, #register-area, #recaptcha {
     float: left;
     clear: both;
 }
 
-#register-area form input, textarea {
+.register-input {
     width: 20rem;
     margin: 0.5rem 3rem;
     padding: 0.5rem;
@@ -83,18 +83,19 @@ header ul a {
     border: 0;
 }
 
-#register-area form textarea{
+#register-area textarea {
     resize: none;
 }
 
-#register-area form #register {
+#register-area #register {
     width: 15rem;
     margin: 0.5rem 0;
     margin-left: 6rem;
+    font-size: 1.0rem;
     color: #FFFFFF;
 }
 
-#register-area form #register:hover {
+#register-area #register:hover {
     background-color:#0066FF;
 }
 
@@ -109,14 +110,9 @@ header ul a {
     padding: 0.1rem 0.5rem;
 }
 
-#register-area form #recaptcha {
+#register-area #recaptcha {
     position: relative;
     left: 3.5rem;
-}
-
-#register-area form #recaptcha input {
-    background-color: white;
-    color: black;
 }
 
 #search {
@@ -130,7 +126,7 @@ header ul a {
 }
 
 #search_results {
-    width: 50rem;
+    width: 40rem;
     margin: 1rem auto;
     color: rgba(255, 255, 255, 1.0);
     background: rgba(0, 0, 0, 0.6);
@@ -143,7 +139,7 @@ header ul a {
 }
 
 #search_results li {
-    width: 50rem;
+    width: 40rem;
     list-style: none;
     text-decoration: none;
     color: #FFFFFF;
@@ -154,40 +150,38 @@ header ul a {
     background: #999;
 }
 
-#poll h2 {
+.poll-info h2 {
   margin: 1.6rem 0;
   font-size: 1.7rem;
   color: rgba( 0, 0, 0, 0.8);
   line-height: 100%;
 }
 
-.poll-info {
-  max-width: 50rem;
-}
-
 .poll-info #visibility {
-  float: left;
-  width: 4.0rem;
-  height: 1.5rem;
+  width: 2.8rem;
+  height: 1.1rem;
   border-radius: 0.30em;
   text-align: center;
-  font-size: 1.1rem;
+  font-size: 0.7rem;
   font-weight: bold;
   color: white;
+}
+
+.poll-info label {
+    font-size: 1.1rem;
 }
 
 .poll-info #state {
-  width: 4.0rem;
-  height: 1.5rem;
-  border-radius: 0.30em;
-  text-align: center;
-  font-size: 1.1rem;
+  display: inline;
+  background: none;
+  margin: 0.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: white;
 }
 
 .poll-info #synopsis {
-  background: rgba(0, 0, 255, 0.6);
+  max-width: 50rem;
+  background: rgba(0, 0, 255, 0.4);
   color: white;
   font-size: 1.1rem;
 }
@@ -236,9 +230,9 @@ input[type=radio]:checked + label:before {
 
 .poll-submit input[type=submit] {
   border: 0;
-  border-radius: 0.4rem;
+  border-radius: 0.3rem;
   background: #0066FF;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: white;
 }
 
@@ -248,4 +242,33 @@ input[type=radio]:checked + label:before {
 
 .invalid {
     box-shadow: 0 0 1.5px 1px red;
+}
+
+.poll-info {
+    display: inline;
+}
+
+.poll-info textarea {
+  resize: none;
+  width: 10rem;
+  height: 3rem;
+  padding: 0.5rem;
+  background:rgba(0,0,0,0.6);
+  color: #FFFFFF;
+  border: 0;
+}
+
+.poll-question textarea {
+    resize: none;
+    width: 30rem;
+    height: 3rem;
+    padding: 0.5rem;
+    background:rgba(0,0,0,0.6);
+    color: #FFFFFF;
+    border: 0;
+}
+
+.poll-question h2 {
+  margin: 0;
+  font-size: 1.2rem;
 }

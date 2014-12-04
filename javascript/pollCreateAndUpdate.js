@@ -96,7 +96,7 @@ function addQuestion() {
     );
 
     if ($this.prev().find('input[name="removeQuestion"]').length === 0) {
-        $this.prev().append('<input type="button" value="remove" name="removeQuestion">');
+        $this.prev().append('<input type="button" value="Remove Question" name="removeQuestion">');
     }
 
 }
@@ -146,4 +146,3 @@ function verifyQuestions() {
 
     return noError;
 }
-
