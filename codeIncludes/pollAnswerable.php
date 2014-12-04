@@ -9,9 +9,7 @@ if ($pollQuery['synopsis']) {
     echo '<p id="synopsis">' . htmlentities($pollQuery['synopsis'])  . '</p>';
 }
 if ($pollQuery['image']) {
-    echo "
-<img src=\"images/{$pollQuery['idUser']}/{$pollQuery['idPoll']}/{$pollQuery['image']}\" alt=\"\">
-    ";
+    echo "<img src=\"images/{$pollQuery['idUser']}/{$pollQuery['idPoll']}/{$pollQuery['image']}\" alt=\"\">";
 }
 echo '
 </div>

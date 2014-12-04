@@ -12,7 +12,7 @@ if (isset($value, $column)) {
         $stmt = $dbh->prepare('SELECT username FROM UserData WHERE username = :value');
       } else if ($column == 'pollName') {
         $stmt = $dbh->prepare(
-        'SELECT Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
         FROM Poll, Visibility, UserData
         WHERE Poll.name LIKE :value
           AND Poll.idVisibility =Visibility.idVisibility
@@ -58,8 +58,13 @@ if (isset($value, $column)) {
                 echo "<ul>";
                 do {
                     $num++;
-                    echo "<li onclick=\"window.location='poll.php?Public=".$row['idPoll']."'\">
-                    <p>".$row['pollName']."</p>
+                    if($row['image'])
+                      echo "<span id='image'><img src=\"images/".$row['idUser']."/".$row['idPoll']."/".$row['image']."\" alt=\"\"></span>";
+                    else
+                      echo"<span id='image'><img /></span>";
+                    echo "<li onclick=\"window.location='poll.php?Public=".$row['idPoll']."'\">";
+
+                    echo "<p><span id='pollName'>".$row['pollName']."</span></p>
                     <p><span id='visibility'>".$row['visibility']."</span><span id='user'>".$row['user']."</span><span id='date'>".$row['date']."</span></p>
                     </li>";
                 } while (($row = $stmt->fetch()) && $num < 100);

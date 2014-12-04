@@ -129,7 +129,7 @@ header ul a {
 }
 
 #search_results {
-    width: 40rem;
+    width: 50rem;
     margin: 1rem auto;
     color: rgba(255, 255, 255, 1.0);
     background: rgba(0, 0, 0, 0.6);
@@ -142,7 +142,7 @@ header ul a {
 }
 
 #search_results li {
-    width: 40rem;
+    width: 50rem;
     list-style: none;
     text-decoration: none;
     color: #FFFFFF;
@@ -150,23 +150,34 @@ header ul a {
 }
 
 #search_results li p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+
+#search_results #pollName {
   font-size: 1.2rem;
-  margin: 0 1.0rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
+}
+
+#search_results #image img {
+  float: left;
+  clear: left;
+  width: 3.9rem;
+  height: 3.9rem;
 }
 
 #search_results #visibility {
-  font-size: 1rem;
   float: left;
+  margin: 0 1rem;
 }
 
 #search_results #date {
-  font-size: 1rem;
   float: right;
-}
-
-#search_results #user {
-  font-size: 1rem;
-  float: center;
+  margin: 0 1rem;
 }
 
 #search_results li:hover {
