@@ -68,7 +68,9 @@ function verifyPassword() {
         }
     }
 
-    verifyPasswords();
+    if ($('#passwordAgainReg').val() !== '') {
+        verifyPasswords();
+    }
 
     if (error === '') {
         $this.removeClass('invalid').next().hide();
