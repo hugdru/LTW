@@ -7,8 +7,8 @@ var globalTimeout = null;
 function loadDocument() {
     $('#emailReg').change(verifyEmail);
     $('#usernameReg').change(verifyUsername);
-    $('form input[name=password]').change(verifyPassword);
-    $('form input[name=passwordAgain]').change(verifyPasswords);
+    $('form input[name="password"]').change(verifyPassword);
+    $('form input[name="passwordAgain"]').change(verifyPasswords);
     $('#search_bar').keyup(function() {
         if (globalTimeout !== null)
             clearTimeout(globalTimeout);
@@ -26,7 +26,7 @@ function verifyEmail() {
                 if (data == 'failed')
                     $('#errormsg_email').hide().prev().removeClass('invalid');
                 else
-                    $('#errormsg_email').show().prev().addClass('invalid');
+                    $('#errormsg_email').css('display', 'inline-block').prev().addClass('invalid');
             }
     });
 }
@@ -37,10 +37,10 @@ function verifyUsername() {
             url: 'search.php',
             data: {'column': 'username', 'value': $('#usernameReg').val()},
             success: function(data) {
-                if(data == 'failed')
+                if (data == 'failed')
                     $('#errormsg_username').hide().prev().removeClass('invalid');
                 else
-                    $('#errormsg_username').show().prev().addClass('invalid');
+                    $('#errormsg_username').css('display', 'inline-block').prev().addClass('invalid');
             }
     });
 }
@@ -68,10 +68,24 @@ function verifyPassword() {
         }
     }
 
+    verifyPasswords();
+
     if (error === '') {
         $this.removeClass('invalid').next().hide();
     } else {
         $this.addClass('invalid').next().html(error).css('display', 'inline-block');
+    }
+}
+
+function verifyPasswords() {
+
+    passwordAgain = $('#passwordAgainReg');
+    password = $('#passwordReg');
+
+    if (passwordAgain.val() === password.val()) {
+        passwordAgain.removeClass('invalid').next().hide();
+    } else {
+        passwordAgain.addClass('invalid').next().html("Passwords don't match").css('display', 'inline-block');
     }
 }
 
