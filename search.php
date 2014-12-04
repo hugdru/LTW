@@ -6,15 +6,48 @@ $value  = $_POST['value'];
 
 if (isset($value, $column)) {
     try{
-        if ($column  == 'email') {
-            $stmt = $dbh->prepare('SELECT email FROM UserData WHERE email = :value');
-        } else if ($column  == 'username') {
-            $stmt = $dbh->prepare('SELECT username FROM UserData WHERE username = :value');
-        } else if ($column == 'pollName') {
-            $stmt = $dbh->prepare('SELECT Poll.name, Poll.idPoll FROM Poll, Visibility WHERE Poll.name LIKE :value AND Visibility.name LIKE "Public" AND Visibility.idVisibility = Poll.idVisibility');
-        }
+      if ($column  == 'email') {
+        $stmt = $dbh->prepare('SELECT email FROM UserData WHERE email = :value');
+      } else if ($column  == 'username') {
+        $stmt = $dbh->prepare('SELECT username FROM UserData WHERE username = :value');
+      } else if ($column == 'pollName') {
+        $stmt = $dbh->prepare(
+        'SELECT Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        FROM Poll, Visibility, UserData
+        WHERE Poll.name LIKE :value
+          AND Poll.idVisibility =Visibility.idVisibility
+          AND Poll.idUser = UserData.idUser
+          AND Visibility.name LIKE "Public"');
+      } else if ($column == 'author') {
+        $stmt = $dbh->prepare(
+        'SELECT Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        FROM Poll, Visibility, UserData
+        WHERE Poll.idUser = UserData.idUser
+          AND UserData.username LIKE :value
+          AND Visibility.idVisibility = Poll.idVisibility
+          AND Visibility.name LIKE "Public"');
+      } else if ($column == 'date') {
+        $stmt = $dbh->prepare(
+        'SELECT Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        FROM Poll, Visibility, UserData
+         WHERE Poll.dateCreation LIKE :value
+         AND Poll.idUser = UserData.idUser
+         AND Visibility.idVisibility = Poll.idVisibility
+         AND Visibility.name LIKE "Public"');
+      } else if ($column == 'state') {
+        $stmt = $dbh->prepare(
+        'SELECT Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        FROM Poll, Visibility, UserData, State
+        WHERE Poll.idState = State.idState
+        AND State.name LIKE :value
+        AND Poll.idUser = UserData.idUser
+        AND Visibility.idVisibility = Poll.idVisibility
+        AND Visibility.name LIKE "Public"');
+      } else if ($column == 'top') {
+        $stmt = $dbh->prepare('SELECT Poll.name, Poll.idPoll FROM Poll, Visibility WHERE Poll.name LIKE :value AND Visibility.name LIKE "Public" AND Visibility.idVisibility = Poll.idVisibility');
+      }
 
-        if ($column == 'pollName') {
+        if ($column == 'pollName' || $column == 'author' || $column == 'date' || $column == 'state') {
             $valueSearch = '%'.$value.'%';
             $stmt->bindParam(':value', $valueSearch);
             $stmt->execute();
@@ -25,7 +58,10 @@ if (isset($value, $column)) {
                 echo "<ul>";
                 do {
                     $num++;
-                    echo "<li onclick=\"window.location='poll.php?Public=".$row['idPoll']."'\">".$row['name']."</li>";
+                    echo "<li onclick=\"window.location='poll.php?Public=".$row['idPoll']."'\">
+                    <p>".$row['pollName']."</p>
+                    <p><span id='visibility'>".$row['visibility']."</span><span id='user'>".$row['user']."</span><span id='date'>".$row['date']."</span></p>
+                    </li>";
                 } while (($row = $stmt->fetch()) && $num < 100);
                 echo "</ul>";
             }

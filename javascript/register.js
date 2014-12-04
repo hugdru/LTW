@@ -10,13 +10,14 @@ function loadDocument() {
     $('#usernameReg').change(verifyUsername);
     $('form input[name="password"]').change(verifyPassword);
     $('form input[name="passwordAgain"]').change(verifyPasswords);
-    $('#search_bar').onload(getPolls());
     $('#search_bar').keyup(function() {
-        if (globalTimeout !== null)
-            clearTimeout(globalTimeout);
+      if (globalTimeout !== null)
+        clearTimeout(globalTimeout);
         globalTimeout = setTimeout(getPolls, 300);
-    }
+      }
     );
+    $('#search_bar').load(getPolls());
+    $('#search_type').change(getPolls);
 
 }
 
@@ -129,16 +130,16 @@ function verifyPasswords() {
 }
 
 function getPolls() {
-    globalTimeout = null;
-    $.ajax({
-            type: 'POST',
-            url: 'search.php',
-            data: {'column': 'pollName', 'value': $('#search_bar').val()},
-            success: function(data) {
-                if (data == 'failed')
-                    $('#search_results').html('');
-                else
-                    $('#search_results').html(data);
-            }
-    });
-}
+  globalTimeout = null;
+  $.ajax({
+    type: 'POST',
+    url: 'search.php',
+    data: {'column': $('#search_type').val(), 'value': $('#search_bar').val()},
+    success: function(data) {
+      if (data == 'failed')
+        $('#search_results').html('');
+        else
+          $('#search_results').html(data);
+        }
+      });
+    }

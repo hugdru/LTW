@@ -9,6 +9,12 @@ require_once 'templates/header.php';?>
     <div id="search">
       <h2>Search Poll</h2>
       <input type="text" id="search_bar" name="search_bar" placeholder="Poll Name">
+      <select id="search_type" name="search-type">
+        <option value="pollName">Poll Name</option>
+        <option value="author">Author</option>
+        <option value="date">Date</option>
+        <option value="state">State</option>
+      </select>
       <div id="search_results"> </div>
     </div>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js" defer></script>
