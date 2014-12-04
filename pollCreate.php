@@ -21,6 +21,7 @@ $visibility = $stmt->fetchAll();
         <form action="processPollCreation.php" method="post" enctype="multipart/form-data" onsubmit="return verifyQuestions();">
             <div class="poll-info">
                 <label>Name * <input type="text" name="name" required="required"></label>
+                <span id="errormsg_name" class="errormsg"></span>
                 <fieldset style="display: inline"><legend>Visibility *</legend>
 <?php
 foreach ($visibility as $key => $value) {

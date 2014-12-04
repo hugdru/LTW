@@ -9,6 +9,7 @@ echo '
 <form action="processPollUpdate.php" method="post" enctype="multipart/form-data" onsubmit="return verifyQuestions();">
 <div class="poll-info">
 <label>Name * <input type="text" name="name" value="' . htmlentities($pollQuery['name'])  . '"></label>
+<span id="errormsg_name" class="errormsg"></span>
 <fieldset style="display: inline"><legend>Visibility *</legend>
 ';
 

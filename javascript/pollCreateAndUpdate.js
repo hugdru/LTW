@@ -9,16 +9,36 @@ function loadDocument() {
     $('#poll').on('click', 'input[name="removeOption"]', removeOption);
     $('#poll').on('click', 'input[name="addQuestion"]', addQuestion);
     $('#poll').on('click', 'input[name="removeQuestion"]', removeQuestion);
+    $('#poll').on('change', 'input[name="name"]', verifyName);
+    $('#poll').on("keyup keypress",
+        function(e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                e.preventDefault();
+                return false;
+            }
+        }
+    );
+    $('#poll').on('keypress', 'input[name="nameOption"]', enterOptionOnEnter);
 }
 
 function addOption() {
+    addOptionAux($(this));
+}
+
+function addOptionAux(previous) {
 
     var exit = false;
-    var previous = $(this).prev();
-    var optionName = previous.children('input').val();
+    var optionName = previous.prev().children('input').val();
     if (!optionName) return;
 
-    var div = previous.prev();
+    var div = previous;
+
+    while (!div.is('div')) {
+        if (div.length === 0) return;
+        div = div.prev();
+    }
+
     div.find('input[type="radio"]').each(
         function() {
             $this = $(this);
@@ -48,7 +68,7 @@ function addOption() {
         var temp = previous;
 
         while (!temp.is('h2')) {
-            if (temp.length === 0) break;
+            if (temp.length === 0) return;
             temp = temp.prev();
         }
 
@@ -147,3 +167,39 @@ function verifyQuestions() {
     return noError;
 }
 
+function verifyName() {
+
+    $this = $(this);
+
+    var error = '';
+
+    name = $this.val();
+
+    if (name.length < 5) {
+        error += 'at least 5 characters';
+    } else if (name.length > 100) {
+        error += 'at most 100 characters';
+    }
+
+    if (!name.match('/^[^0-9]{5}/')) {
+        if (error === '') {
+            error += "first 5 characters can't be numbers";
+        } else {
+            error += ", first 5 characters can't be numbers";
+        }
+    }
+
+    if (error === '') {
+        $this.removeClass('invalid').next().hide();
+    } else {
+        $this.addClass('invalid').parent().next().html(error).css('display', 'inline-block');
+    }
+    alert(error);
+}
+
+function enterOptionOnEnter(key) {
+
+    if (key.which === 13) {
+        addOptionAux($(this).parent().next());
+    }
+}

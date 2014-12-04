@@ -33,10 +33,14 @@ $error = null;
 
 // Check validity of values with regex
 
+$nameLength = strlen($_POST['name']);
+
 if ($_POST['name'] === '') {
     $error = 'nameEmpty';
-} else if (strlen($_POST['name']) < 5) {
+} else if ($nameLength < 5) {
     $error = 'nameShort';
+} else if ($nameLength > 100) {
+    $error = 'nameLong';
 } else if (!preg_match('/^[^0-9]{5}/', $_POST['name'])) {
     $error = 'nameFirst5NoNumber';
 }
