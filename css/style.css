@@ -101,7 +101,6 @@ header ul a {
 #register-area .errormsg {
     float: left;
     clear: both;
-    /*color: rgba(255, 0, 0, 1.0);*/
     background: rgba(207, 43, 45, 0.4);
     display: none;
     position: relative;
@@ -156,33 +155,33 @@ header ul a {
 }
 
 #poll h2 {
-  margin: 20px 0px;
-  font-size: 28px;
+  margin: 1.6rem 0;
+  font-size: 1.7rem;
   color: rgba( 0, 0, 0, 0.8);
   line-height: 100%;
 }
 
 .poll-info {
-  max-width: 750px;
+  max-width: 50rem;
 }
 
 .poll-info #visibility {
   float: left;
-  width: 70px;
-  height: 25px;
+  width: 4.0rem;
+  height: 1.5rem;
   border-radius: 0.30em;
   text-align: center;
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: bold;
   color: white;
 }
 
 .poll-info #state {
-  width: 70px;
-  height: 25px;
+  width: 4.0rem;
+  height: 1.5rem;
   border-radius: 0.30em;
   text-align: center;
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: bold;
   color: white;
 }
@@ -190,39 +189,27 @@ header ul a {
 .poll-info #synopsis {
   background: rgba(0, 0, 255, 0.6);
   color: white;
-  font-size: 18px;
+  font-size: 1.1rem;
 }
-
-
 
 .poll-question {
   background: rgba(255, 255, 255, 0.8);
-  max-width: 700px;
-  padding: 25px;
-  margin: 5px 0px;
+  max-width: 47rem;
+  padding: 1.5rem;
+  margin: 0.5rem 0;
 }
-
-#poll-view tr {
-  margin: 50px 50px;
-}
-
 
 .poll-question h3 {
-  margin: 0px;
-  font-size: 18px;
+  margin: 0;
+  font-size: 1.1rem;
 }
 
 .poll-question label {
   display: inline-block;
-  font-size: 16px;
-  line-height: 25px;
+  font-size: 1.2rem;
+  line-height: 1.4rem;
   cursor: pointer;
   color: rgba( 0, 0, 0, 0.7);
-}
-
-.poll-question label:hover {
-  font-size: 20px;
-  color: rgba( 0, 0, 255, 0.7);
 }
 
 .poll-question input[type=radio] {
@@ -231,12 +218,12 @@ header ul a {
 
 .poll-question input[type=radio] + label:before {
   content: "";
-  width: 16px;
-  height: 16px;
-  border-radius: 0.30em;
-  font-size: 24px;
   float: left;
-  margin: 5px 10px;
+  width: 1.0rem;
+  height: 1.0rem;
+  border-radius: 0.30em;
+  font-size: 1.2rem;
+  margin: 0.3rem 0.8rem;
   background-color: #66CCFF;
 }
 
@@ -244,19 +231,19 @@ input[type=radio]:checked + label:before {
   content: "\2713";
   color: white;
   text-align: center;
-  line-height: 18px;
+  line-height: 1.2rem;
 }
 
 .poll-submit input[type=submit] {
-  border: 0px;
-  border-radius: 5px;
+  border: 0;
+  border-radius: 0.4rem;
   background: #0066FF;
-  font-size: 24px;
+  font-size: 1.5rem;
   color: white;
 }
 
 .poll-submit input[type=submit]:hover {
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .invalid {
