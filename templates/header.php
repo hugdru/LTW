@@ -33,15 +33,17 @@ if (!$loggedIn) {
         </div>
     ";
 }?>
-        <nav>
-            <ul>
-            <li><a href="index.php">Home</a></li>
-<?php if (!$loggedIn) {
-    echo '<li><a href="register.php">Register</a></li>';
-} else {
-    echo '<li><a href="user.php">User</a></li>';
-}?>
-            <li><a href="about.php">About</a></li>
-            </ul>
-        </nav>
+      <nav>
+        <ul>
+          <li><a href="index.php"><label id="home_button">Pollite</label></a></li>
+          <?php if (!$loggedIn) {
+            echo '<li><a href="register.php">Register</a></li>';
+          } else {
+            echo '<li><a href="user.php">User</a></li>
+            <li><a href="pollCreate.php">Create</a></li>';
+          }?>
+          <li><a href="searchPoll.php">Search</a></li>
+          <li><a href="about.php">About</a></li>
+        </ul>
+      </nav>
     </header>

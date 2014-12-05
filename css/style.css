@@ -56,6 +56,38 @@ header ul a {
     font-size: 1.2rem;
 }
 
+header #home_button {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+header input[type='submit'] {
+  text-decoration: none;
+  background-color:#0066FF;
+  font-size: 1.2rem;
+  color: #FFFFFF;
+  border: 0;
+}
+
+footer {
+  display: inline;
+  width: 90%;
+
+}
+
+footer * {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+footer p {
+  float: left;
+}
+
+footer a {
+  float: right;
+}
+
 #register-area {
     position: fixed;
     top: 50%;
@@ -309,4 +341,18 @@ input[type=radio]:checked + label:before {
 .poll-question h2 {
   margin: 0;
   font-size: 1.2rem;
+}
+
+
+#home h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+#home h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: rgba(0,0,0,0.6);
 }
