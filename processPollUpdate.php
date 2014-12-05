@@ -140,13 +140,13 @@ foreach ($questionsQuery as $keyQuestion => $questionQuery) {
 
     $decodedRadios = json_decode($questionQuery['options']);
 
-    $postOptions = count($_POST['option'][$keyQuestion]);
-    if ($postOptions < 2) {
+    $postOptionsLength = count($_POST['option'][$keyQuestion]);
+    if ($postOptionsLength < 2) {
         header("Location: poll.php?$mode=$pollId&edit&err=notEnoughOptions");
         exit();
     }
 
-    if (count($decodedRadios) !==  $postOptions) {
+    if (count($decodedRadios) !==  $postOptionsLength) {
         $resetAnswer = true;
         break;
     }

@@ -44,6 +44,7 @@ foreach ($visibility as $key => $value) {
                 </div>
                 <label>Option Name <input type="text" name="nameOption"></label>
                 <input type="button" name="addOption" value="Add Option">
+                <input type="button" name="removeQuestion" value="Remove Question">
             </div>
             <input type="button" name="addQuestion" value="Add Question">
             <div class="poll-submit">

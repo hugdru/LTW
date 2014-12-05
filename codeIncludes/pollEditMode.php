@@ -40,6 +40,7 @@ foreach ($questionsQuery as $key => $questionQuery) {
     echo '
     <label>Option Name <input type="text" name="nameOption"></label>
     <input type="button" name="addOption" value="Add Option">
+    <input type="button" name="removeQuestion" value="Remove Question">
     </div>
     ';
 }

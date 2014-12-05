@@ -10,7 +10,7 @@ function loadDocument() {
     $('#poll').on('click', 'input[name="addQuestion"]', addQuestion);
     $('#poll').on('click', 'input[name="removeQuestion"]', removeQuestion);
     $('#poll').on('change', 'input[name="name"]', verifyName);
-    $('#poll').on("keyup keypress",
+    $('#poll').on('keyup keypress',
         function(e) {
             var code = e.keyCode || e.which;
             if (code == 13) {
@@ -44,7 +44,14 @@ function addOptionAux(previous) {
         function() {
             $this = $(this);
             if ($this.val() === optionName) {
-                alert('There can\'t be two options with the same name');
+
+                parent = $this.parent();
+
+                if (parent.nextAll('span.errormsg').length === 0) {
+                    parent.next().after('<span id="errormsg_name" class="errormsg">Option already exists</span>');
+                }
+                parent.nextAll('span.errormsg').css('display', 'inline-block').delay(2000).fadeOut();
+
                 exit = true;
                 return;
             }
@@ -113,7 +120,7 @@ function addQuestion() {
                     $thiss.html(match[1] + (Number(match[2]) + 1));
                 }
             }
-        ).end().find('div').children().remove().end().end()
+        ).end().find('span').remove().end().find('div').children().remove().end().end()
     );
 
     if ($this.prev().find('input[name="removeQuestion"]').length === 0) {
@@ -123,7 +130,20 @@ function addQuestion() {
 }
 
 function removeQuestion() {
-    var $this = $(this).parent();
+
+    var $this;
+
+    if ((pollQuestions = $('.poll-question')).length === 1) {
+        $this = $(this);
+        if ($this.nextAll('span.errormsg').length === 0) {
+            $this.after('<span id="errormsg_name" class="errormsg">Must have at least one Question</span>');
+        }
+        $this.next().css('display', 'inline-block').delay(2000).fadeOut();
+        return;
+    }
+
+    $this = $(this).parent();
+
     $this.nextAll('.poll-question').each(
         function() {
             var $this = $(this);
@@ -158,10 +178,12 @@ function verifyQuestions() {
             $this = $(this);
             if ($this.find('input[type="radio"]').length < 2) {
                 noError = false;
-                alert('Missing option in Question ' + $questionNumber);
-                return;
+                heading = $this.find('h2');
+                if (heading.prev('span').length === 0) {
+                    heading.before('<span id="errormsg_name" class="errormsg">Missing option</span>');
+                }
+                heading.prev('span').css('display', 'inline-block').delay(5000).fadeOut();
             }
-            ++$questionNumber;
         }
     );
 
