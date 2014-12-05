@@ -61,11 +61,39 @@ if ($synopsis === '') {
     $synopsis = null;
 }
 
-// Same
-$description = $_POST['description'];
+// Malicious user could send "array" with different indexes
+$i = 0;
+$descriptions = [];
+foreach ($_POST['description'] as $desc) {
+    if ($desc === '') {
+        header('location: pollCreate.php?err=invalidDescription');
+        exit();
+    }
+    $descriptions[$i] = $desc;
+    ++$i;
+}
 
 // Same
-$options = $_POST['option'];
+$options = [];
+$i = 0;
+foreach ($_POST['option'] as $option) {
+
+    if (count($option) < 2) {
+        header('Location: pollCreate.php?err=MissingOptions');
+        exit();
+    }
+
+    $t = 0;
+    foreach ($option as $radio) {
+        if ($radio === '') {
+            header('location: pollCreate.php?err=invalidRadio');
+            exit();
+        }
+        $options[$i][$t] = $radio;
+        ++$t;
+    }
+    ++$i;
+}
 
 // Check if the image is really one
 $image = $_FILES['image']['tmp_name'];
@@ -142,22 +170,11 @@ $stmt = $dbh->prepare(
     VALUES (:option, :result, :description, :idPoll)'
 );
 foreach ($options as $key =>$option) {
-    if ($description[$key] === '') {
-        $dbh->rollBack();
-        header('Location: pollCreate.php?err=MissingDescription');
-        exit();
-    }
-    if (count($option) < 2) {
-        $dbh->rollBack();
-        header('Location: pollCreate.php?err=MissingOptions');
-        exit();
-    }
-
     $jsonOption = json_encode($option);
     $jsonResult = json_encode(array_fill(0, count($option), 0));
     $stmt->bindParam(':option', $jsonOption);
     $stmt->bindValue(':result', $jsonResult);
-    $stmt->bindParam(':description', $description[$key]);
+    $stmt->bindParam(':description', $descriptions[$key]);
     $stmt->bindParam(':idPoll', $pollId);
     if (!$stmt->execute()) {
         $dbh->rollBack();

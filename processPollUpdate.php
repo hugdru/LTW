@@ -60,6 +60,40 @@ if ($_POST['visibility'] !== '') {
     $error .= 'Visibility';
 }
 
+// Malicious user could send "array" with different indexes
+$i = 0;
+$descriptions = [];
+foreach ($_POST['description'] as $desc) {
+    if ($desc === '') {
+        header('location: pollCreate.php?err=invalidDescription');
+        exit();
+    }
+    $descriptions[$i] = $desc;
+    ++$i;
+}
+
+// Same
+$options = [];
+$i = 0;
+foreach ($_POST['option'] as $option) {
+
+    if (count($option) < 2) {
+        header('Location: pollCreate.php?err=MissingOptions');
+        exit();
+    }
+
+    $t = 0;
+    foreach ($option as $radio) {
+        if ($radio === '') {
+            header('location: pollCreate.php?err=invalidRadio');
+            exit();
+        }
+        $options[$i][$t] = $radio;
+        ++$t;
+    }
+    ++$i;
+}
+
 // Check if the image is really one
 $image = $_FILES['image']['tmp_name'];
 $imageFileName = null;
@@ -136,9 +170,9 @@ if (!($questionsQuery = $stmt->fetchAll())) {
 
 $resetAnswer = false;
 
-if (count($_POST['option']) !== count($questionsQuery)) {
+if (count($options) !== count($questionsQuery)) {
     $resetAnswer = true;
-    foreach ($_POST['option'] as $postOptions) {
+    foreach ($options as $postOptions) {
         if (count($postOptions) < 2) {
             header("Location: poll.php?$mode=$pollId&edit&err=notEnoughOptions");
             exit();
@@ -147,14 +181,14 @@ if (count($_POST['option']) !== count($questionsQuery)) {
 } else {
     foreach ($questionsQuery as $keyQuestion => $questionQuery) {
 
-        if ($questionQuery['description'] !== $_POST['description'][$keyQuestion]) {
+        if ($questionQuery['description'] !== $descriptions[$keyQuestion]) {
             $resetAnswer = true;
             break;
         }
 
         $decodedRadios = json_decode($questionQuery['options']);
 
-        $postOptionsLength = count($_POST['option'][$keyQuestion]);
+        $postOptionsLength = count($options[$keyQuestion]);
         if ($postOptionsLength < 2) {
             header("Location: poll.php?$mode=$pollId&edit&err=notEnoughOptions");
             exit();
@@ -166,7 +200,7 @@ if (count($_POST['option']) !== count($questionsQuery)) {
         }
 
         foreach ($decodedRadios as $keyRadio => $decodedRadio) {
-            if ($decodedRadio != $_POST['option'][$keyQuestion][$keyRadio]) {
+            if ($decodedRadio != $options[$keyQuestion][$keyRadio]) {
                 $resetAnswer = true;
                 break;
             }
@@ -270,17 +304,12 @@ if ($resetAnswer) {
         VALUES (:option, :result, :description, :idPoll)'
     );
 
-    foreach ($_POST['option'] as $key =>$option) {
-        if ($_POST['description'][$key] === '') {
-            $dbh->rollBack();
-            header("Location: poll.php?$mode=$pollId&edit&err=missingDescription");
-            exit();
-        }
+    foreach ($options as $key =>$option) {
         $jsonOption = json_encode($option);
         $jsonResult = json_encode(array_fill(0, count($option), 0));
         $stmt->bindParam(':option', $jsonOption);
         $stmt->bindParam(':result', $jsonResult);
-        $stmt->bindParam(':description', $_POST['description'][$key]);
+        $stmt->bindParam(':description', $descriptions[$key]);
         $stmt->bindParam(':idPoll', $pollQuery['idPoll']);
         if (!$stmt->execute()) {
             $dbh->rollBack();

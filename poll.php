@@ -119,9 +119,9 @@ if ($permission === 'answerable' && (!$isOwner || !$isEditMode)) {
 </main>
 <script src="https://code.jquery.com/jquery-1.11.1.min.js" defer></script>
 <?php
-if ($permission === 'answerable' && ((!$isEditMode && $isOwner) || ($isEditMode && !$isOwner))) {
+if ($permission === 'answerable' && (!$isEditMode || !$isOwner)) {
     echo '<script type="text/javascript" src="javascript/pollAnswer.js" defer></script>';
-} else if ($permission === 'viewable' && ((!$isEditMode && $isOwner) || ($isEditMode && !$isOwner))) {
+} else if ($permission === 'viewable' && (!$isEditMode || !$isOwner)) {
     echo '<script type="text/javascript" src="javascript/pollView.js" defer></script>';
 } else if ($isOwner && $isEditMode) {
     echo '<script type="text/javascript" src="javascript/pollCreateAndUpdate.js" defer></script>';
