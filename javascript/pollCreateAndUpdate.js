@@ -172,7 +172,6 @@ function removeQuestion() {
 function verifyQuestions() {
 
     var noError = true;
-    var $questionNumber = 1;
 
     $('div.poll-question').each(
         function() {
