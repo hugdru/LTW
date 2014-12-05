@@ -4,6 +4,8 @@ var regexOptionRadio = /\[(\d)]\[(\d+)]$/i;
 var regexHeader = /^([\w\s]+)(\d+)$/;
 var regexHeaderNumber = /(\d+)$/;
 
+var issueResetWarning = false;
+
 function loadDocument() {
     $('#poll').on('click', 'input[name="addOption"]', addOption);
     $('#poll').on('click', 'input[name="removeOption"]', removeOption);
@@ -20,6 +22,7 @@ function loadDocument() {
         }
     );
     $('#poll').on('keypress', 'input[name="nameOption"]', enterOptionOnEnter);
+    $('#poll').on('change', 'textarea', function() { issueResetWarning = true; });
 }
 
 function addOption() {
@@ -27,6 +30,8 @@ function addOption() {
 }
 
 function addOptionAux(previous) {
+
+    issueResetWarning = true;
 
     var exit = false;
     var option = previous.prev().children('input');
@@ -93,6 +98,9 @@ function addOptionAux(previous) {
 }
 
 function removeOption() {
+
+    issueResetWarning = true;
+
     var $this = $(this);
 
     $this.nextAll().children('input[type="radio"]').each(
@@ -110,6 +118,9 @@ function removeOption() {
 }
 
 function addQuestion() {
+
+    issueResetWarning = true;
+
     var $this = $(this);
     var previous = $this.prev();
     $this.before(previous.clone().
@@ -131,6 +142,8 @@ function addQuestion() {
 }
 
 function removeQuestion() {
+
+    issueResetWarning = true;
 
     var $this;
 
@@ -186,6 +199,15 @@ function verifyQuestions() {
             }
         }
     );
+
+    if (noError && issueResetWarning && ($('#editMode').length > 0)) {
+        var answer = confirm('Because you changed a question the poll results will be reset. Do you wish to continue?');
+        if (answer == true) {
+            noError = true;
+        } else {
+            noError = false;
+        }
+    }
 
     return noError;
 }
