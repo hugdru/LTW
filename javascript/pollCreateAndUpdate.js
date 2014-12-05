@@ -47,10 +47,10 @@ function addOptionAux(previous) {
 
                 parent = $this.parent();
 
-                if (parent.nextAll('span.errormsg').length === 0) {
-                    parent.next().after('<span id="errormsg_name" class="errormsg">Option already exists</span>');
+                if (parent.nextUntil('br').filter('span').length === 0) {
+                    parent.next().after('<span class="errormsg">Option already exists</span>');
                 }
-                parent.nextAll('span.errormsg').css('display', 'inline-block').delay(2000).fadeOut();
+                parent.nextAll('span.errormsg').first().css('display', 'inline-block').delay(2000).fadeOut();
 
                 exit = true;
                 return;
@@ -104,6 +104,7 @@ function removeOption() {
     );
 
     $this.prev().remove();
+    $this.nextUntil('br').remove();
     $this.next().remove();
     $this.remove();
 }

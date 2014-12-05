@@ -136,32 +136,47 @@ if (!($questionsQuery = $stmt->fetchAll())) {
 
 $resetAnswer = false;
 
-foreach ($questionsQuery as $keyQuestion => $questionQuery) {
-
-    $decodedRadios = json_decode($questionQuery['options']);
-
-    $postOptionsLength = count($_POST['option'][$keyQuestion]);
-    if ($postOptionsLength < 2) {
-        header("Location: poll.php?$mode=$pollId&edit&err=notEnoughOptions");
-        exit();
+if (count($_POST['option']) !== count($questionsQuery)) {
+    $resetAnswer = true;
+    foreach ($_POST['option'] as $postOptions) {
+        if (count($postOptions) < 2) {
+            header("Location: poll.php?$mode=$pollId&edit&err=notEnoughOptions");
+            exit();
+        }
     }
+} else {
+    foreach ($questionsQuery as $keyQuestion => $questionQuery) {
 
-    if (count($decodedRadios) !==  $postOptionsLength) {
-        $resetAnswer = true;
-        break;
-    }
-
-    foreach ($decodedRadios as $keyRadio => $decodedRadio) {
-        if ($decodedRadio != $_POST['option'][$keyQuestion][$keyRadio]) {
+        if ($questionQuery['description'] !== $_POST['description'][$keyQuestion]) {
             $resetAnswer = true;
             break;
         }
-    }
 
-    if ($resetAnswer === true) {
-        break;
-    }
+        $decodedRadios = json_decode($questionQuery['options']);
 
+        $postOptionsLength = count($_POST['option'][$keyQuestion]);
+        if ($postOptionsLength < 2) {
+            header("Location: poll.php?$mode=$pollId&edit&err=notEnoughOptions");
+            exit();
+        }
+
+        if (count($decodedRadios) !==  $postOptionsLength) {
+            $resetAnswer = true;
+            break;
+        }
+
+        foreach ($decodedRadios as $keyRadio => $decodedRadio) {
+            if ($decodedRadio != $_POST['option'][$keyQuestion][$keyRadio]) {
+                $resetAnswer = true;
+                break;
+            }
+        }
+
+        if ($resetAnswer === true) {
+            break;
+        }
+
+    }
 }
 
 $generatedKey = $pollQuery['generatedKey'];
@@ -271,24 +286,8 @@ if ($resetAnswer) {
             exit();
         }
     }
-} else {
-    // Update just the descriptions
-    $stmt = $dbh->prepare(
-        'UPDATE Question
-        SET description = :description
-        WHERE idQuestion = :idQuestion'
-    );
-
-    foreach ($questionsQuery as $key => $questionQuery) {
-        $stmt->bindParam(':description', $_POST['description'][$key]);
-        $stmt->bindParam(':idQuestion', $questionQuery['idQuestion']);
-        if (!$stmt->execute()) {
-            $dbh->rollBack();
-            header("Location: poll.php?$mode=$pollId&edit&err=insert");
-            exit();
-        }
-    }
 }
+
 
 // Place file in disk
 if ($image !== '') {

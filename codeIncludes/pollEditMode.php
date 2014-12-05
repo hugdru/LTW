@@ -33,11 +33,13 @@ foreach ($questionsQuery as $key => $questionQuery) {
     <h2>Question ' . ($key + 1) . '</h2>
     <label>Description<textarea name="description[]" cols="30" rows="6" placeholder="Explain what this question is for">' . htmlentities($questionQuery['description']) . '</textarea></label><br>
     ';
+    echo '<div>';
     $decodedRadios = json_decode($questionQuery['options']);
     foreach ($decodedRadios as $subkey => $radio) {
-        echo '<div><label>' . $radio . ' <input type="radio" name="option[' . $key . ']' . '[' . $subkey . ']" value="' . $radio . '" checked></label><input type="button" name="removeOption" value="remove"><br></div>';
+        echo '<label>' . $radio . ' <input type="radio" name="option[' . $key . ']' . '[' . $subkey . ']" value="' . $radio . '" checked></label><input type="button" name="removeOption" value="remove"><br>';
     }
     echo '
+    </div>
     <label>Option Name <input type="text" name="nameOption"></label>
     <input type="button" name="addOption" value="Add Option">
     <input type="button" name="removeQuestion" value="Remove Question">
