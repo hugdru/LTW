@@ -12,7 +12,6 @@ require_once 'templates/header.php';?>
       <h2>Newly added Polls</h2>
       <input type="text" class="hidden_bar" id="search_bar" name="search_bar" value="">
       <input type="text" class="hidden_bar" id="search_type" name="search_type" value="new">
-      </select>
       <div id="search_results"> </div>
     </div>
   </div>
