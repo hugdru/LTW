@@ -132,14 +132,15 @@ if (preg_match('/^private$/i', $_POST['visibility'])) {
 $dbh->beginTransaction();
 $stmt = $dbh->prepare(
     "INSERT INTO Poll
-    (name, dateCreation, synopsis, conclusion, generatedKey, image, idUser, idState, idVisibility)
-    VALUES (:name, :dateCreation, :synopsis, null, :generatedKey, :image, :idUser, :idState, :idVisibility)"
+    (name, dateCreation, timeCreation, synopsis, conclusion, generatedKey, image, idUser, idState, idVisibility)
+    VALUES (:name, :dateCreation, :timeCreation, :synopsis, null, :generatedKey, :image, :idUser, :idState, :idVisibility)"
 );
 try {
     $stmt->execute(
         array(
             ':name' => $name,
-            ':dateCreation' => date('Y-m-d'),
+            ':dateCreation' => gmdate('Y-m-d'),
+            ':timeCreation' => gmdate('H-i-s'),
             ':synopsis' => $synopsis,
             ':generatedKey' => $generatedKey,
             ':image' => $imageFileName,

@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS Poll (
     idPoll INTEGER,
     name TEXT NOT NULL,
     dateCreation DATE NOT NULL,
+    timeCreation TEXT NOT NULL,
     synopsis TEXT,
     conclusion TEXT,
     generatedKey TEXT,

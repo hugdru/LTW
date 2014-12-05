@@ -222,15 +222,17 @@ if ($idVisibility !== $pollQuery['idVisibility'] && $mode === 'public') {
 }
 
 if ($resetAnswer === true) {
-    $date = date('Y-m-d');
+    $date = gmdate('Y-m-d');
+    $time = gmdate('H-i-s');
 } else {
     $date = $pollQuery['dateCreation'];
+    $time = $pollQuery['timeCreation'];
 }
 
 $dbh->beginTransaction();
 $stmt = $dbh->prepare(
     'UPDATE Poll
-    SET name = :name, dateCreation = :dateCreation, synopsis = :synopsis, generatedKey = :generatedKey, image = :image, idVisibility = :idVisibility
+    SET name = :name, dateCreation = :dateCreation, timeCreation = :timeCreation, synopsis = :synopsis, generatedKey = :generatedKey, image = :image, idVisibility = :idVisibility
     WHERE idPoll = :idPoll'
 );
 try {
@@ -238,6 +240,7 @@ try {
         array(
             ':name' => $_POST['name'],
             ':dateCreation' => $date,
+            ':timeCreation' => $time,
             ':synopsis' => $_POST['synopsis'],
             ':generatedKey' => $generatedKey,
             ':image' => $imageFileName,
