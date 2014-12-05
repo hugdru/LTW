@@ -88,10 +88,11 @@ if ($loggedIn) {
         exit();
     }
 } else {
-    if (($cookieSet = isset($_cookie['poll']))) {
+    $cookieSet = isset($_COOKIE['poll']);
+    if ($cookieSet) {
         $parsedPollIds = explode(',', $_COOKIE['poll']);
         if (array_search(
-            $_POST['pollId'], $parsedPollIds, true
+            $_POST['pollId'], $parsedPollIds, false
         ) !== false) {
             header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=duplicate");
             exit();
@@ -178,7 +179,7 @@ if ($loggedIn) {
     if (!$cookieSet) {
         setcookie('poll', $result['idPoll'], time() + (86400 * 180), '/');
     } else {
-        $_COOKIE['poll'] .= ",{$result['idPoll']}";
+        setcookie('poll', $_COOKIE['poll'] .= ',' . $result['idPoll'], time() + (86400 * 180), '/');
     }
 
     $stmt = $dbh->prepare(
