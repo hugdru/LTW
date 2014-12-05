@@ -43,13 +43,79 @@ if (isset($value, $column)) {
         AND Poll.idUser = UserData.idUser
         AND Visibility.idVisibility = Poll.idVisibility
         AND Visibility.name LIKE "Public"');
+      } else if ($column == 'new') {
+        $stmt = $dbh->prepare(
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        FROM Poll, Visibility, UserData
+        WHERE Poll.idUser = UserData.idUser
+        AND Visibility.idVisibility = Poll.idVisibility
+        AND Visibility.name LIKE "Public"
+        ORDER BY date(Poll.dateCreation) DESC');
       } else if ($column == 'top') {
-        $stmt = $dbh->prepare('SELECT Poll.name, Poll.idPoll FROM Poll, Visibility WHERE Poll.name LIKE :value AND Visibility.name LIKE "Public" AND Visibility.idVisibility = Poll.idVisibility');
+        $stmt = $dbh->prepare(
+        'SELECT count, Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        FROM count(idQuestion) as "count", Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        ( SELECT
+        FROM Poll, Visibility, UserData, Question, UserQuestionAnswer, UnauthenticatedQuestionAnswer
+        WHERE Poll.idUser = UserData.idUser
+        AND Visibility.idVisibility = Poll.idVisibility
+        AND Visibility.name LIKE "Public"
+        AND Poll.idPoll = Question.idPoll,
+        AND ( Question.idQuestion = UnauthenticatedQuestionAnswer.idQuestion
+          OR Question.idQuestion = UserQuestionAnswer.idQuestion)
+          FROM COUNT()
+        ) GROUP BY idPoll
+        ORDER BY count DESC');
+      } else if ($column == 'public') {
+        $stmt = $dbh->prepare(
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        FROM Poll, Visibility, UserData
+        WHERE Poll.name LIKE :value
+        AND Poll.idUser = UserData.idUser
+        AND UserData.idUser = :user
+        AND Visibility.idVisibility = Poll.idVisibility
+        AND Visibility.name LIKE "Public"');
+      } else if ($column == 'private') {
+        $stmt = $dbh->prepare(
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        FROM Poll, Visibility, UserData
+        WHERE Poll.name LIKE :value
+        AND Poll.idUser = UserData.idUser
+        AND UserData.idUser = :user
+        AND Visibility.idVisibility = Poll.idVisibility
+        AND Visibility.name LIKE "Private"');
+      } else if ($column == 'open') {
+        $stmt = $dbh->prepare(
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        FROM Poll, Visibility, UserData, State
+        WHERE Poll.name LIKE :value
+        AND Poll.idState = State.idState
+        AND State.name LIKE "Open"
+        AND Poll.idUser = UserData.idUser
+        AND UserData.idUser = :user
+        AND Visibility.idVisibility = Poll.idVisibility');
+      } else if ($column == 'closed') {
+        $stmt = $dbh->prepare(
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        FROM Poll, Visibility, UserData, State
+        WHERE Poll.name LIKE :value
+        AND Poll.idState = State.idState
+        AND State.name LIKE "Closed"
+        AND Poll.idUser = UserData.idUser
+        AND UserData.idUser = :user
+        AND Visibility.idVisibility = Poll.idVisibility');
       }
 
-        if ($column == 'pollName' || $column == 'author' || $column == 'date' || $column == 'state') {
-            $valueSearch = '%'.$value.'%';
-            $stmt->bindParam(':value', $valueSearch);
+        if ($column != 'email' && $column != 'username') {
+              if($column != 'new') {
+                $valueSearch = '%'.$value.'%';
+                $stmt->bindParam(':value', $valueSearch);
+            } if ($column == 'public' || $column == 'private' || $column == 'open' || $column == 'closed') {
+                require_once 'codeIncludes/secureSession.php';
+                $valueSearch = '%'.$value.'%';
+                $stmt->bindParam(':value', $valueSearch);
+                $stmt->bindParam(':user', $_SESSION['idUser']);
+            }
             $stmt->execute();
             $num = 0;
             if (!($row = $stmt->fetch())) {
