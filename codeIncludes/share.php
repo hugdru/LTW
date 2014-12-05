@@ -5,9 +5,9 @@ function sendMail($email, $url) {
   $message = 'why i so pro';
   $headers = 'From:Pollite';
   if (mail($email,$subject,$message,$headers)){
-    echo("succeded");
+    echo("Mail was send!");
   }else{
-    echo("failed");
+    echo("Failed to send email!");
   }
 }
 

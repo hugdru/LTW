@@ -10,10 +10,7 @@ function shareEmail() {
     url: 'codeIncludes/share.php',
     data: {'email': $('#email').val(), 'url': $('#url').val()},
     success: function(data) {
-      if (data == 'failed')
-        alert('failed');
-        else
-          alert(data);
-        }
+        $('#share_result').html(data);
+    }
       });
     }
