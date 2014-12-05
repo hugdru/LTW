@@ -143,7 +143,9 @@ $stmt = $dbh->prepare(
 );
 foreach ($options as $key =>$option) {
     if ($description[$key] === '') {
-        $description[$key] = null;
+        $dbh->rollBack();
+        header('Location: pollCreate.php?err=MissingDescription');
+        exit();
     }
     if (count($option) < 2) {
         $dbh->rollBack();

@@ -272,7 +272,9 @@ if ($resetAnswer) {
 
     foreach ($_POST['option'] as $key =>$option) {
         if ($_POST['description'][$key] === '') {
-            $_POST['description'][$key] = null;
+            $dbh->rollBack();
+            header("Location: poll.php?$mode=$pollId&edit&err=missingDescription");
+            exit();
         }
         $jsonOption = json_encode($option);
         $jsonResult = json_encode(array_fill(0, count($option), 0));

@@ -31,7 +31,7 @@ foreach ($questionsQuery as $key => $questionQuery) {
     echo '
     <div class="poll-question">
     <h2>Question ' . ($key + 1) . '</h2>
-    <label>Description<textarea name="description[]" cols="30" rows="6" placeholder="Explain what this question is for">' . htmlentities($questionQuery['description']) . '</textarea></label><br>
+    <label>Description<textarea name="description[]" cols="30" rows="6" placeholder="Explain what this question is for" required>' . htmlentities($questionQuery['description']) . '</textarea></label><br>
     ';
     echo '<div>';
     $decodedRadios = json_decode($questionQuery['options']);
