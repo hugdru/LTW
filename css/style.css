@@ -56,6 +56,38 @@ header ul a {
     font-size: 1.2rem;
 }
 
+header #home_button {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+header input[type='submit'] {
+  text-decoration: none;
+  background-color:#0066FF;
+  font-size: 1.2rem;
+  color: #FFFFFF;
+  border: 0;
+}
+
+footer {
+  display: inline;
+  width: 90%;
+
+}
+
+footer * {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+footer p {
+  float: left;
+}
+
+footer a {
+  float: right;
+}
+
 #register-area {
     position: fixed;
     top: 50%;
@@ -213,8 +245,8 @@ header ul a {
 }
 
 .poll-info img {
-  max-width: 50rem;
-  max-height: 50rem;
+  max-width: 30rem;
+  max-height: 30rem;
 }
 
 .poll-info #synopsis {
@@ -279,7 +311,7 @@ input[type=radio]:checked + label:before {
 }
 
 .invalid {
-    box-shadow: 0 0 1.5px 1px red;
+  box-shadow: 0 0 1.5px 1px red;
 }
 
 .poll-info {
@@ -309,4 +341,60 @@ input[type=radio]:checked + label:before {
 .poll-question h2 {
   margin: 0;
   font-size: 1.2rem;
+}
+
+
+#home h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+#home h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: rgba(0,0,0,0.6);
+}
+
+#share_email {
+  margin: 1rem;
+}
+
+#share_email #email {
+  width: 10rem;
+  padding: 0.3rem;
+  background:rgba(0,0,0,0.6);
+  color: #FFFFFF;
+  border: 0;
+}
+
+#share_email #submit_share {
+  width: 5rem;
+  padding: 0.3rem;
+  border-radius: 0.30em;
+  background:rgba(200,0,0,0.8);
+  font-size: 1rem;
+  color: #FFFFFF;
+  border: 0;
+}
+
+#share_email #share_label {
+  font-size: 1.1rem;
+  color: #000000;
+}
+
+#about {
+  margin: 2rem;
+  padding: 2rem;
+  width: 50rem;
+  border-radius: 1rem;
+  text-align: center ;
+  margin-left: auto ;
+  margin-right: auto ;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+#about label {
+  margin: 0.5rem;
 }

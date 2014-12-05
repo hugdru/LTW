@@ -77,7 +77,7 @@ if (isset($value, $column)) {
         AND Visibility.name LIKE "Public"');
       } else if ($column == 'private') {
         $stmt = $dbh->prepare(
-        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll, Poll.generatedKey
         FROM Poll, Visibility, UserData
         WHERE Poll.name LIKE :value
         AND Poll.idUser = UserData.idUser
@@ -86,7 +86,7 @@ if (isset($value, $column)) {
         AND Visibility.name LIKE "Private"');
       } else if ($column == 'open') {
         $stmt = $dbh->prepare(
-        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll, Poll.generatedKey
         FROM Poll, Visibility, UserData, State
         WHERE Poll.name LIKE :value
         AND Poll.idState = State.idState
@@ -96,7 +96,7 @@ if (isset($value, $column)) {
         AND Visibility.idVisibility = Poll.idVisibility');
       } else if ($column == 'closed') {
         $stmt = $dbh->prepare(
-        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll
+        'SELECT Poll.idUser, Poll.image, Poll.name as "pollName", Visibility.name as "visibility", UserData.username as "user", Poll.dateCreation as "date", Poll.idPoll, Poll.generatedKey
         FROM Poll, Visibility, UserData, State
         WHERE Poll.name LIKE :value
         AND Poll.idState = State.idState
@@ -120,22 +120,25 @@ if (isset($value, $column)) {
             $num = 0;
             if (!($row = $stmt->fetch())) {
                 echo "";
-            } else {
+              } else {
                 echo "<ul>";
                 do {
-                    $num++;
-                    if($row['image'])
-                      echo "<span id='image'><img src=\"images/".$row['idUser']."/".$row['idPoll']."/".$row['image']."\" alt=\"\"></span>";
-                    else
-                      echo"<span id='image'><img /></span>";
-                    echo "<li onclick=\"window.location='poll.php?Public=".$row['idPoll']."'\">";
-
-                    echo "<p><span id='pollName'>".$row['pollName']."</span></p>
-                    <p><span id='visibility'>".$row['visibility']."</span><span id='user'>".$row['user']."</span><span id='date'>".$row['date']."</span></p>
-                    </li>";
+                  $num++;
+                  if($row['image'])
+                  echo "<span id='image'><img src=\"images/".$row['idUser']."/".$row['idPoll']."/".$row['image']."\" alt=\"\"></span>";
+                  else
+                  echo"<span id='image'><img src=\"resources/images/no-image-avaiable.png\" alt=\"No image\"/></span>";
+                  echo "<li onclick=\"window.location='poll.php?";
+                  if($row['visibility'] == 'Public')
+                  echo "Public=".$row['idPoll'];
+                  else
+                  echo "Private=".$row['generatedKey'];
+                  echo "'\"><p><span id='pollName'>".$row['pollName']."</span></p>
+                  <p><span id='visibility'>".$row['visibility']."</span><span id='user'>".$row['user']."</span><span id='date'>".$row['date']."</span></p>
+                  </li>";
                 } while (($row = $stmt->fetch()) && $num < 100);
                 echo "</ul>";
-            }
+              }
         } else {
             $stmt->bindParam(':value', $value);
             $stmt->execute();
