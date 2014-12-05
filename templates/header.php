@@ -35,7 +35,7 @@ if (!$loggedIn) {
 }?>
       <nav>
         <ul>
-          <li><a href="index.php"><label id="home_button">Pollite</label></a></li>
+            <li><a href="index.php" id="home_button">Pollite</a></li>
           <?php if (!$loggedIn) {
             echo '<li><a href="register.php">Register</a></li>';
           } else {
