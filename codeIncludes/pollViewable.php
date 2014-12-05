@@ -1,6 +1,6 @@
 <?php
 echo '<div id="poll">';
-if ($permission === 'editable') {
+if ($isOwner) {
     echo '<input type="button" name="edit" value="edit">';
 }
 echo '

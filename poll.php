@@ -40,33 +40,33 @@ if (!$pollQuery) {
     exit();
 }
 
+$isOwner = false;
+
 $loggedIn = validLogin();
 
 // Check if the poll is only:
-// editable(owner);
-// viewable(submitted once);
-// or, answerable
-// Only makes sense if user is not creating it
+// viewable
+// answerable
 if ($loggedIn) {
-    // For authenticated users
-    if ($pollQuery['idUser'] === $_SESSION['idUser']) {
-        $permission = 'editable';
-    } else {
-        $stmt = $dbh->prepare(
-            'SELECT * FROM UserQuestionAnswer
-            WHERE
-                idQuestion IN (SELECT idQuestion FROM Question WHERE idPoll = :pollId) AND
-                idUser = :userId'
-        );
-        $stmt->bindParam(':pollId', $pollQuery['idPoll']);
-        $stmt->bindParam(':userId', $_SESSION['idUser']);
-        $stmt->execute();
 
-        if ($stmt->fetch()) {
-            $permission = 'viewable';
-        } else {
-            $permission = 'answerable';
-        }
+    if ($pollQuery['idUser'] === $_SESSION['idUser']) {
+        $isOwner = true;
+    }
+
+    $stmt = $dbh->prepare(
+        'SELECT * FROM UserQuestionAnswer
+        WHERE
+            idQuestion IN (SELECT idQuestion FROM Question WHERE idPoll = :pollId) AND
+            idUser = :userId'
+    );
+    $stmt->bindParam(':pollId', $pollQuery['idPoll']);
+    $stmt->bindParam(':userId', $_SESSION['idUser']);
+    $stmt->execute();
+
+    if ($stmt->fetch()) {
+        $permission = 'viewable';
+    } else {
+        $permission = 'answerable';
     }
 } else {
     // For unauthenticated users
@@ -102,28 +102,28 @@ $state = $state['name'];
 $stmt = $dbh->query("SELECT idQuestion, result, options, description FROM Question WHERE idPoll = {$pollQuery['idPoll']}");
 $questionsQuery = $stmt->fetchAll();
 
-if ($permission === 'answerable') {
+if ($permission === 'answerable' && (!$isOwner || !$isEditMode)) {
 
     include_once 'codeIncludes/pollAnswerable.php';
 
-} else if (($permission === 'viewable') || ($permission === 'editable' && !$isEditMode)) {
+} else if ($permission === 'viewable' && (!$isOwner || !$isEditMode)) {
 
     include_once 'codeIncludes/pollViewable.php';
 
-} else if ($permission === 'editable' && $isEditMode) {
+} else if ($isOwner && $isEditMode) {
 
     include_once 'codeIncludes/pollEditMode.php';
-
 }
+
 ?>
 </main>
 <script src="https://code.jquery.com/jquery-1.11.1.min.js" defer></script>
 <?php
-if ($permission === 'answerable') {
+if ($permission === 'answerable' && ((!$isEditMode && $isOwner) || ($isEditMode && !$isOwner))) {
     echo '<script type="text/javascript" src="javascript/pollAnswer.js" defer></script>';
-} else if ($permission === 'viewable' || !$isEditMode) {
+} else if ($permission === 'viewable' && ((!$isEditMode && $isOwner) || ($isEditMode && !$isOwner))) {
     echo '<script type="text/javascript" src="javascript/pollView.js" defer></script>';
-} else if ($permission === 'editable' && $isEditMode) {
+} else if ($isOwner && $isEditMode) {
     echo '<script type="text/javascript" src="javascript/pollCreateAndUpdate.js" defer></script>';
 }
 require_once 'templates/footer.php';

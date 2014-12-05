@@ -1,8 +1,14 @@
 $().ready(loadDocument);
 
 function loadDocument() {
-  $('#visibility:contains("Public")').css("background", "green");
-  $('#visibility:contains("Private")').css("background", "red");
+    $('#visibility:contains("Public")').css("background", "green");
+    $('#visibility:contains("Private")').css("background", "red");
+    $('#poll').on('click', 'input[name="edit"]', redirectEdit);
+}
+
+function redirectEdit() {
+    var url = window.location.href + '&edit';
+    window.location.replace(url);
 }
 
 function verifyRadios() {
