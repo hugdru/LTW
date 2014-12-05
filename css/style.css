@@ -154,6 +154,10 @@ footer a {
     text-align: center;
 }
 
+#search .hidden_bar {
+  display: none;
+}
+
 #search h2 {
     margin: 2rem 0;
     font-size: 2rem;

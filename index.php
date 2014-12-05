@@ -10,9 +10,8 @@ require_once 'templates/header.php';?>
     <h1> Welcome to Pollite </h1>
     <div id="search">
       <h2>Newly added Polls</h2>
-      <input type="hidden" id="search_bar" name="search_bar" placeholder="Poll Name">
-      <select hidden="hidden" value="new" id="search_type" name="search-type">
-        <option value="new">Poll Name</option>
+      <input type="text" class="hidden_bar" id="search_bar" name="search_bar" value="">
+      <input type="text" class="hidden_bar" id="search_type" name="search_type" value="new">
       </select>
       <div id="search_results"> </div>
     </div>
