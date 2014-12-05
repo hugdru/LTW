@@ -223,7 +223,7 @@ if ($idVisibility !== $pollQuery['idVisibility'] && $mode === 'public') {
 
 if ($resetAnswer === true) {
     $date = gmdate('Y-m-d');
-    $time = gmdate('H-i-s');
+    $time = gmdate('H:i:s');
 } else {
     $date = $pollQuery['dateCreation'];
     $time = $pollQuery['timeCreation'];

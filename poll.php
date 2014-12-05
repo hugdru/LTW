@@ -71,15 +71,33 @@ if ($loggedIn) {
 } else {
     // For unauthenticated users
     // Look at the cookie
+
     if (!isset($_COOKIE['poll'])) {
         $permission = 'answerable';
     } else {
-        $parsedPollIds = explode(',', $_COOKIE['poll']);
-        if (array_search(
-            $pollQuery['idPoll'], $parsedPollIds, true
-        ) !== false) {
-            $permission = 'viewable';
-        } else {
+        $permission = null;
+        $cookie = $_COOKIE['poll'];
+        $decodedCookieData = json_decode($cookie, true);
+        if ($decodedCookieData === null) {
+            header("Location: poll.php?$mode=$pollId&err=invalidCookie");
+            exit();
+        }
+
+        foreach ($decodedCookieData as $key => $cookiePollData) {
+            if (count($cookiePollData) != 3) {
+                header("Location: poll.php?$mode=$pollId&err=invalidCookie");
+                exit();
+            } else if ($cookiePollData[0] == $pollQuery['idPoll']) {
+                if (($cookiePollData[1] == $pollQuery['dateCreation']) && ($cookiePollData[2] == $pollQuery['timeCreation'])) {
+                    $permission = 'viewable';
+                    break;
+                } else {
+                    $permission = 'answerable';
+                    break;
+                }
+            }
+        }
+        if ($permission === null) {
             $permission = 'answerable';
         }
     }

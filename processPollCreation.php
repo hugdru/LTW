@@ -140,7 +140,7 @@ try {
         array(
             ':name' => $name,
             ':dateCreation' => gmdate('Y-m-d'),
-            ':timeCreation' => gmdate('H-i-s'),
+            ':timeCreation' => gmdate('H:i:s'),
             ':synopsis' => $synopsis,
             ':generatedKey' => $generatedKey,
             ':image' => $imageFileName,

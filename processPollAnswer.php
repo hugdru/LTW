@@ -89,13 +89,28 @@ if ($loggedIn) {
     }
 } else {
     $cookieSet = isset($_COOKIE['poll']);
+    $cookie = null;
+
     if ($cookieSet) {
-        $parsedPollIds = explode(',', $_COOKIE['poll']);
-        if (array_search(
-            $_POST['pollId'], $parsedPollIds, false
-        ) !== false) {
-            header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=duplicate");
+        $cookie = json_decode($_COOKIE['poll'], true);
+        if ($cookie === null) {
+            header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=invalidCookie");
             exit();
+        }
+
+        foreach ($cookie as $key => $cookiePollData) {
+            if (count($cookiePollData) != 3) {
+                header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=invalidCookie");
+                exit();
+            } else if ($cookiePollData[0] == $result['idPoll']) {
+                if (($cookiePollData[1] == $result['dateCreation']) && ($cookiePollData[2] == $result['timeCreation'])) {
+                    header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=duplicate");
+                    exit();
+                } else {
+                    unset($cookie[$key]);
+                    $cookie = array_values($cookie);
+                }
+            }
         }
     }
 }
@@ -169,17 +184,29 @@ if ($loggedIn) {
         $stmtUpdateQuestion->bindParam(':idQuestion', $question);
 
         if (!$stmtUpdateQuestion->execute()) {
-            header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=failedUpdate");
             $dbh->rollBack();
+            header("Location: poll.php?{$_POST['mode']}={$_POST['pollId']}&err=failedUpdate");
             exit();
         }
     }
 } else {
 
     if (!$cookieSet) {
-        setcookie('poll', $result['idPoll'], time() + (86400 * 180), '/');
+        $cookie = array
+            (
+                array($result['idPoll'], $result['dateCreation'], $result['timeCreation'])
+            );
+
+
+        $encodedCookieData = json_encode($cookie);
+
+        setcookie('poll', $encodedCookieData, time() + (86400 * 180), '/');
     } else {
-        setcookie('poll', $_COOKIE['poll'] .= ',' . $result['idPoll'], time() + (86400 * 180), '/');
+        $cookie[] = array($result['idPoll'], $result['dateCreation'], $result['timeCreation']);
+
+        $encodedCookieData = json_encode($cookie);
+
+        setcookie('poll', $encodedCookieData, time() + (86400 * 180), '/');
     }
 
     $stmt = $dbh->prepare(
