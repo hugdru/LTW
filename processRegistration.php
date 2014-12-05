@@ -138,9 +138,9 @@ if (!$stmt->execute(
     )
 )) {
     header('Location: register.php?error=failedInsert');
-    exit(0);
+    exit();
 }
 echo 'Hey';
 header('Location: index.php');
-exit(0);
+exit();
 ?>
