@@ -2,6 +2,10 @@ LTW
 Turma 1
 Grupo 13: Filipe Daniel Rodrigues Marques, Hugo Ari Rodrigues Drumond, José Pedro Pereira Amorim
 
+Ver ficheiro php.ini, usámos algumas funcionalidade que não estão ativas no servidor http apache da feup.
+Por isso quando vamos para a página de processamente a página fica em branco.
+Está tudo a funcionar localmente, com a nossa configuração.
+
 Lista de logins:
 
 Emails fictícios    Passwords
