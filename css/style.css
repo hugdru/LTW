@@ -386,6 +386,10 @@ input[type=radio]:checked + label:before {
   color: #000000;
 }
 
+#share_email #url {
+  display: none;
+}
+
 #about {
   margin: 2rem;
   padding: 2rem;

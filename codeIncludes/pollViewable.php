@@ -9,10 +9,11 @@ echo '
 <label>Current Poll State:<div id="state">' . $state . '</div></label>';
 
 $url = "http" . (($_SERVER['SERVER_PORT']==443) ? "s://" : "://") . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
 echo '<div id="share_email">
 <label id="share_label"> Share by e-mail </label>
 <input type="email" id="email" name="email" placeholder="awrsas@dwawd.dwa">
-<input type="hidden" id="url" name ="url value="'.$url.'">
+<input type="text" id="url" name ="url" value="'.$url.'">
 <input type="submit" id="submit_share" value="Share" name="Share">
 <label id="share_result"></label>
 </div>';

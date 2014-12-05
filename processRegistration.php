@@ -140,7 +140,7 @@ if (!$stmt->execute(
     header('Location: register.php?error=failedInsert');
     exit(0);
 }
-
+echo 'Hey';
 header('Location: index.php');
 exit(0);
 ?>
