@@ -1,7 +1,6 @@
 body {
-    background-image: url("../resources/images/background4.jpg");
+    background: url("../resources/images/background4.jpg") no-repeat center center fixed;
     background-size: 100%;
-    background-repeat: no-repeat;
     width: 90%;
     margin: 0 auto;
     padding: 0;
@@ -238,15 +237,14 @@ footer a {
 
 .poll-info #state {
   display: inline;
-  background: none;
   margin: 0.5rem;
   font-size: 1.2rem;
   font-weight: bold;
 }
 
-.poll-info img {
-  max-width: 30rem;
-  max-height: 30rem;
+.poll img {
+  max-width: 25rem;
+  max-height: 25rem;
 }
 
 .poll-info #synopsis {

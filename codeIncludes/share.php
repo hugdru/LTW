@@ -1,8 +1,13 @@
 <?php
 
+require_once 'secureSession.php';
+
 function sendMail($email, $url) {
-  $subject = 'User invited to answer a poll';
-  $message = 'why i so pro';
+  $username = 'Anonymous';
+  if(isset($_SESSION['username']))
+  $username = $_SESSION['username'];
+  $subject = $username." has invited you to answer a poll";
+  $message = "You can answer the poll by clicking the following link: ".$url;
   $headers = 'From:Pollite';
   if (mail($email,$subject,$message,$headers)){
     echo("Mail was send!");
